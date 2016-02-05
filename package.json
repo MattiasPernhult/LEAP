@@ -1,0 +1,10 @@
+{
+  "name": "compile-sandbox",
+  "version": "0.1.0",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "crypto": "0.0.3",
+    "express": "^4.13.4"
+  }
+}
