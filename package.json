@@ -4,7 +4,11 @@
   "main": "app.js",
   "dependencies": {
     "body-parser": "^1.14.2",
+    "busboy": "^0.2.12",
+    "connect-busboy": "0.0.2",
     "crypto": "0.0.3",
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "gridfs-stream": "^1.1.1",
+    "mongoose": "^4.4.3"
   }
 }
