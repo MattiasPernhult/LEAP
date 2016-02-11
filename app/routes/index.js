@@ -6,14 +6,9 @@ router.get('/', function(req, res, next) {
   res.render('index');
 });
 
-router.get('/profile', isLoggedIn, function(req, res) {
-    res.render('profile', {
-        user: req.user
-    });
-});
-
 router.get('/logout', function(req, res) {
     req.logout();
+    req.session.destroy();
     res.redirect('/');
 });
 
@@ -21,16 +16,9 @@ router.get('/auth/google', passport.authenticate('google', { scope : ['profile',
 
 router.get('/auth/google/callback',
     passport.authenticate('google', {
-        successRedirect: '/profile',
+        successRedirect: '/users/submission',
         failureRedirect: '/'
     })
 );
-
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/');
-}
 
 module.exports = router;

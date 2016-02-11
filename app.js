@@ -13,6 +13,8 @@ var session  = require('express-session');
 var teacher = require('./app/routes/teacher');
 var compiler = require('./app/routes/compiler')
 var index = require('./app/routes/index');
+var users = require('./app/routes/users');
+
 var passportConfig = require('./app/config/passport');
 passportConfig();
 
@@ -39,7 +41,7 @@ app.use(busboy());
 // });
 
 app.use(session({
-    secret: 'ilovescotcotc',
+    secret: 'ilovescodddsds90stcotc',
     saveUninitialized: false,
     resave: false
 }));
@@ -49,6 +51,7 @@ app.use(passport.session());
 app.use('/', index);
 app.use('/admins', teacher);
 app.use('/compilers', compiler);
+app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
