@@ -4,7 +4,6 @@ var router = express.Router();
 
 // project packages
 var controller = require('../controllers/compiler_controller');
-var mongoService = require('../services/mongo_service');
 
 router.post('/compile', function(req, res) {
     controller.compile(req, res);
