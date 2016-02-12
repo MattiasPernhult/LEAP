@@ -10,8 +10,8 @@ var passport = require('passport');
 var session  = require('express-session');
 
 // project packages
-var teacher = require('./app/routes/teacher');
-var compiler = require('./app/routes/compiler')
+var admins = require('./app/routes/admins');
+var compilers = require('./app/routes/compilers');
 var index = require('./app/routes/index');
 var users = require('./app/routes/users');
 
@@ -41,7 +41,7 @@ app.use(busboy());
 // });
 
 app.use(session({
-    secret: 'ilovescodddsds90stcotc',
+    secret: 'ilovescodddsds90090jijk',
     saveUninitialized: false,
     resave: false
 }));
@@ -49,8 +49,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', index);
-app.use('/admins', teacher);
-app.use('/compilers', compiler);
+app.use('/admins', admins);
+app.use('/compilers', compilers);
 app.use('/users', users);
 
 // catch 404 and forward to error handler
