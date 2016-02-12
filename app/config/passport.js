@@ -1,8 +1,8 @@
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var passport = require('passport');
-var User = require('../schemas/user');
 
 var configAuth = require('./auth');
+var mongoService = require('../services/mongo_service');
 
 module.exports = function() {
 
@@ -13,7 +13,7 @@ module.exports = function() {
 
     // used to deserialize the user
     passport.deserializeUser(function(id, done) {
-        User.findById(id, function(err, user) {
+        mongoService.findUserById(id, function(err, user) {
             done(err, user);
         });
     });
@@ -26,21 +26,15 @@ module.exports = function() {
     function(token, refreshToken, profile, done) {
 
         process.nextTick(function() {
-
-            User.findOne({'google.id': profile.id}, function(err, user) {
+            mongoService.findOne({'google.id': profile.id}, function(err, user) {
                 if (err) {
                     return done(err);
                 }
                 if (user) {
                     return done(null, user);
                 }
-                var newUser = new User();
-                newUser.google.id = profile.id;
-                newUser.google.token = token;
-                newUser.google.name = profile.displayName;
-                newUser.google.email = profile.emails[0].value;
 
-                newUser.save(function(err) {
+                mongoService.saveGoogleUser(profile, token, function(err, newUser) {
                     if (err) {
                         throw err;
                     }
