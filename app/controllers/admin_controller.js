@@ -22,15 +22,21 @@ controller.upload = function(req, res) {
         file.pipe(stream);
 
         stream.on('finish', function(err) {
+
             var file = {
                 code: this.fileContent,
-                teacher: req.body.teacher,
-                course: req.body.course
+                adminName: req.user.google.name,
+                adminEmail: req.user.google.email,
+                languageID: req.body.language,
+                courseCode: req.body.course,
+                assignmentID: req.body.assignmentId
             };
             mongoService.insertTestfile(file, function(err, result) {
                 if (err) {
+                    console.log('ERROR');
                     return res.status(500).send(err);
                 }
+                console.log('Testfile added: ' + result);
                 return res.send(result);
             });
         });

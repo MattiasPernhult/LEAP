@@ -6,7 +6,6 @@ var router = express.Router();
 var controller = require('../controllers/compiler_controller');
 
 router.post('/compile', function(req, res) {
-    console.log(req.user);
     controller.compile(req, res);
 });
 

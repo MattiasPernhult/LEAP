@@ -1,12 +1,18 @@
-var Sandbox = function(cp, tf, di, cc, fn, cb, li, ln) {
-    this.currentPath = cp;
-    this.tempFolder = tf;
-    this.dockerImage = di;
-    this.compilerCommand = cc;
-    this.fileName = fn;
-    this.codeBody = cb;
-    this.languageID = li;
-    this.languageName = ln;
+var Sandbox = function(langID, assID, tempFold, currPath, langName, compComm,
+    usFi, teFi, teRu, dockIm, teRuLo, usFiCon, jaRu) {
+    this.languageID = langID;
+    this.assignmentID = assID;
+    this.tempFolder = tempFold;
+    this.currentPath = currPath;
+    this.languageName = langName;
+    this.compileCommand = compComm;
+    this.userFile = usFi;
+    this.testFile = teFi;
+    this.testRunner = teRu;
+    this.dockerImage = dockIm;
+    this.testRunnerLocation = teRuLo;
+    this.userFileContent = new Buffer(usFiCon.toString(), 'base64').toString('ascii');
+    this.javaRunner = jaRu;
 };
 
 Sandbox.prototype.compile = function(callback) {
@@ -21,19 +27,60 @@ Sandbox.prototype.compile = function(callback) {
 Sandbox.prototype.setup = function(callback) {
     var exec = require('child_process').exec;
     var fs = require('fs');
+    var mongoService = require('../services/mongo_service');
 
     var self = this;
 
-    exec(this.getExec(), function(st) {
-        fs.writeFile(self.currentPath + self.tempFolder + '/' + self.fileName, self.codeBody, function(err) {
-            if (err) {
-                console.log(err);
-            } else {
-                exec('chmod 777 \'' + self.currentPath + self.tempFolder + '/' + self.fileName + '\'');
-                callback();
-            }
+    // hämta från mongo, skriv testfilen till mappen
+    // kopiera TestRunner till mappen
+
+    mongoService.getTestfileById(this.assignmentID, function(err, testfile) {
+        if (err) {
+            console.log(err);
+            // kunde inte hitta testfilen, rätt id?
+        }
+        // console.log('-------\nTESTFILE');
+        // console.log(testfile);
+        // console.log('-------');
+        var rawTestfileContent = new Buffer(testfile[0].code.toString(), 'base64').toString('ascii');
+        console.log(self.testRunnerLocation);
+
+        exec(self.getExec(), function(st) {
+            fs.writeFile(self.currentPath + self.tempFolder + '/' + self.testFile, rawTestfileContent, function(err) {
+                if (err) {
+                    console.log(err);
+                }
+                fs.writeFile(self.currentPath + self.tempFolder + '/' + self.userFile, self.userFileContent, function(err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    exec('cp ' + self.testRunnerLocation + ' ' + self.currentPath + self.tempFolder + '/' + self.testRunner, function(ste) {
+                        // exec('cp ' + self.javaRunner + ' ' + self.currentPath + self.tempFolder + '/java_runner.sh', function(ster) {
+                        console.log('DONE');
+                        callback();
+                        // });
+                    });
+                });
+            });
         });
+
+        // console.log('-------\nRAW TESTFILE');
+        // console.log(rawTestfileContent);
+        // console.log('-------');
     });
+
+
+
+    // exec(this.getExec(), function(st) {
+    //     fs.writeFile(self.currentPath + self.tempFolder + '/' + self.userFile, self.codeBody, function(err) {
+    //         if (err) {
+    //             console.log(err);
+    //         } else {
+    //             exec('chmod 777 \'' + self.currentPath + self.tempFolder + '/' + self.fileName + '\'');
+    //             callback();
+    //         }
+    //     });
+    // });
 };
 
 Sandbox.prototype.getExec = function() {
@@ -47,10 +94,18 @@ Sandbox.prototype.execute = function(callback) {
 
     var self = this;
 
+    // var executeStatement = 'docker run -v ' + this.currentPath + this.tempFolder +
+    //     ':/' + this.tempFolder + ' --name ' + this.tempFolder + ' -e compiler=' +
+    //     this.compilerCommand + ' -e file=./' + this.tempFolder + '/' + this.fileName +
+    //     ' -e output=./' + this.tempFolder + '/output.txt ' + this.dockerImage;
+
     var executeStatement = 'docker run -v ' + this.currentPath + this.tempFolder +
-        ':/' + this.tempFolder + ' --name ' + this.tempFolder + ' -e compiler=' +
-        this.compilerCommand + ' -e file=./' + this.tempFolder + '/' + this.fileName +
-        ' -e output=./' + this.tempFolder + '/output.txt ' + this.dockerImage;
+        ':/' + this.tempFolder + ' --name ' + this.tempFolder + ' -e testfile=' +
+        this.testFile + ' -e javafile=' + this.userFile + ' -e testrunner=' + this.testRunner +
+        ' -e tempfolder=' + this.tempFolder + ' -e output=./output.txt' +
+        ' -e go=TestRunner ' + this.dockerImage;
+
+    console.log(executeStatement);
 
     exec(executeStatement, function(error, stdout, stderr) {
         console.log('ERROR');

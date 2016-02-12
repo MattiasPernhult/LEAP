@@ -1,5 +1,5 @@
 // project packages
-var TestfileSchema = require('../schemas/testfile_schema');
+var TestfileSchema = require('../schemas/testfile');
 var UserSchema = require('../schemas/user');
 var AdminSchema = require('../schemas/admin');
 
