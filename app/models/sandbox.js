@@ -132,7 +132,7 @@ Sandbox.prototype.execute = function(callback) {
             }
         });
 
-    }, 1000);
+    }, 2000);
 };
 
 module.exports = Sandbox;

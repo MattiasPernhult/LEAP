@@ -41,7 +41,7 @@ app.use(busboy());
 // });
 
 app.use(session({
-    secret: 'ilovescodddsds90090jijk',
+    secret: 'ilovescodddsdklkloojijk',
     saveUninitialized: false,
     resave: false
 }));
