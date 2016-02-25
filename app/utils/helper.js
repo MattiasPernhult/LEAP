@@ -2,6 +2,7 @@ var crypto = require('crypto');
 
 var mongoService = require('../services/mongo_service');
 var CustomStream = require('../models/custom_stream');
+var compilers = require('./compilers');
 
 var helper = {};
 
@@ -36,6 +37,19 @@ helper.prepareBody = function(req, res, next) {
   });
 };
 
+helper.validteAdminUploadParameters = function(req, res, next) {
+  // Kolla så att submission id finns med och language id och att en fil är vald
+  var parameters = ['fileContent', 'languageID', 'assignmentID', 'courseCode'];
+  var errors = checkParametersExists(req.body, parameters);
+  if (errors.length > 0) {
+    return res.status(400).send(errors);
+  }
+  var correctId = Number(req.body.languageID) < compilers.length;
+  if (!correctId) {
+    return res.status(400).send({message: 'The language does not exist'});
+  }
+};
+
 helper.validateSubmissionParameters = function(req, res, next) {
   // Kolla så att submission id finns med och language id och att en fil är vald
   var errors = checkParametersExists(req.body, ['fileContent', 'languageID', 'assignmentID']);
@@ -66,6 +80,7 @@ var checkParametersCorrectness = function(body, done) {
     if (!testfile) {
       return done({message: 'There are no testfile with this assignment id'});
     }
+    console.log(typeof body.languageID);
     if (Number(body.languageID) !== testfile[0].languageID) {
       return done({message: 'The assignment id has a different language id'});
     }
