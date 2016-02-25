@@ -1,4 +1,6 @@
 var crypto = require('crypto');
+var exec = require('child_process').exec;
+var fs = require('fs');
 
 var mongoService = require('../services/mongo_service');
 var CustomStream = require('../models/custom_stream');
@@ -61,6 +63,41 @@ helper.validateSubmissionParameters = function(req, res, next) {
       return res.status(400).send(err);
     }
     next();
+  });
+};
+
+helper.createFolder = function(tempFolder, path, done) {
+  var command = 'mkdir ' + path + tempFolder + '&& chmod 777 ' + path + tempFolder;
+  exec(command, function(err, stdout, stderr) {
+    if (err) {
+      return done(stderr);
+    }
+    return done(null);
+  });
+};
+
+var checkTestFileCorrectness = function(body, done) {
+  // gör om testfilen till vanlig text
+  // skapa en unik mapp och lägga i testfilen där
+  // kopiera rnner-scriptet till den unika mappen
+  // skapa docker-kommandot, kör den och fånga upp stderr och skicka tillbaka
+
+  var testfile = new Buffer(body.fileContent.toString(), 'base64').toString('ascii');
+
+  // setting up folders and path
+  var tempFolder = helper.getRandomFolder();
+  var path = path.join(__dirname, '../../');
+
+  createFolder(tempFolder, path, function(err) {
+    if (err) {
+      return done(err);
+    }
+    fs.writeFile(path + tempFolder + '/MainTest.java', testfile,
+      function(err) {
+        if (err) {
+          return done(err);
+        }
+      };
   });
 };
 
