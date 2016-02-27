@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
-var helper = require('../utils/base_helper');
+var loginHelper = require('../utils/login_helper');
 
 router.get('/', function(req, res, next) {
   res.render('index');
@@ -19,9 +19,9 @@ router.get('/auth/google', passport.authenticate('google', {
 
 router.get('/auth/google/callback',
   passport.authenticate('google'),
-  helper.isLoggedIn,
+  loginHelper.isLoggedIn,
   function(req, res) {
-    helper.isAdmin(req, function(redirect) {
+    loginHelper.isAdmin(req, function(redirect) {
       res.redirect(redirect);
     });
   });

@@ -1,6 +1,6 @@
 // project packages
 var Sandbox = require('../models/sandbox');
-var helper = require('../utils/helper');
+var helper = require('../utils/base_helper');
 var compilers = require('../utils/compilers');
 
 var path = require('path');

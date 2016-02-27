@@ -5,6 +5,7 @@ var path = require('path');
 
 var mongoService = require('../services/mongo_service');
 var compilers = require('./compilers');
+var ioHelper = require('./io_helper');
 
 var helper = {};
 
@@ -12,19 +13,12 @@ helper.getRandomFolder = function() {
   return crypto.randomBytes(10).toString('hex');
 };
 
-helper.isLoggedIn = function(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/');
-};
-
 helper.prepareUniqueFolder = function(req, res, next) {
   var tempFolder = helper.getRandomFolder();
   req.body.tempFolder = tempFolder;
   var currentPath = path.join(__dirname, '../../');
 
-  helper.createFolder(tempFolder, currentPath, function(err) {
+  ioHelper.createFolder(tempFolder, currentPath, function(err) {
     if (err) {
       console.log(err);
     }
@@ -57,92 +51,7 @@ helper.prepareBody = function(req, res, next) {
   });
 };
 
-helper.validteAdminUploadParameters = function(req, res, next) {
-  // Kolla så att submission id finns med och language id och att en fil är vald
-  var parameters = ['languageID', 'assignmentID', 'courseCode'];
-  var errors = checkParametersExists(req.body, parameters);
-  if (errors.length > 0) {
-    return res.status(400).send(errors);
-  }
-  var correctId = Number(req.body.languageID) < compilers.length;
-  if (!correctId) {
-    return res.status(400).send({
-      message: 'The language does not exist',
-    });
-  }
-  checkTestFileCorrectness(req.body, function(err, result) {
-    if (err) {
-      return res.status(400).send(err);
-    }
-    if (result.length > 0) {
-      return res.status(400).send({
-        message: result,
-      });
-    }
-    next();
-  });
-};
-
-helper.validateSubmissionParameters = function(req, res, next) {
-  // Kolla så att submission id finns med och language id och att en fil är vald
-  var errors = checkParametersExists(req.body, ['languageID', 'assignmentID']);
-  if (errors.length > 0) {
-    return res.status(400).send(errors);
-  }
-  checkParametersCorrectness(req.body, function(err) {
-    if (err) {
-      return res.status(400).send(err);
-    }
-    next();
-  });
-};
-
-helper.createFolder = function(tempFolder, path, done) {
-  var command = 'mkdir ' + path + tempFolder + '&& chmod 777 ' + path + tempFolder;
-  exec(command, function(err, stdout, stderr) {
-    if (err) {
-      return done(stderr);
-    }
-    return done(null);
-  });
-};
-
-helper.copyFile = function(source, target, done) {
-  var readStream = fs.createReadStream(source);
-  var writeStream = fs.createWriteStream(target);
-
-  readStream.pipe(writeStream);
-
-  readStream.on('end', function() {
-    done();
-  });
-};
-
-var checkTestFileCorrectness = function(body, done) {
-  var tempFolder = body.tempFolder;
-  var currentPath = path.join(__dirname, '../../');
-  var userFolder = body.userFolder;
-
-  var joinedPath = currentPath + tempFolder;
-
-  var dockerCommand = 'docker run -v ' + joinedPath + ':/' + tempFolder +
-    ' --name ' + tempFolder + ' -e tempfolder=./' + tempFolder + '/' + userFolder +
-    ' compile_sandbox_admin_upload';
-
-  exec(dockerCommand);
-  var intervalId = setInterval(function() {
-    fs.readFile(currentPath + tempFolder + '/' + userFolder + '/error.txt', 'utf8',
-      function(err, data) {
-      if (err) {
-        return;
-      }
-      clearInterval(intervalId);
-      return done(null, data);
-    });
-  }, 2000);
-};
-
-var checkParametersExists = function(body, parameters) {
+var checkIfParametersExists = function(body, parameters) {
   var errors = [];
   for (var index in parameters) {
     var parameter = parameters[index];
@@ -172,24 +81,66 @@ var checkParametersCorrectness = function(body, done) {
   });
 };
 
-helper.isAdmin = function(req, callback) {
-  if (req.user.admin) {
-    if (req.user.admin === 'yes') {
-      return callback('/admins/profile');
-    }
-    return callback('/users/submission');
+helper.validateSubmissionParameters = function(req, res, next) {
+  var errors = checkIfParametersExists(req.body, ['languageID', 'assignmentID']);
+  if (errors.length > 0) {
+    return res.status(400).send(errors);
   }
-  mongoService.isAdmin(req.user.google.email, function(err, admin) {
-    if (err)  {
-      return callback('/');
+  checkParametersCorrectness(req.body, function(err) {
+    if (err) {
+      return res.status(400).send(err);
     }
-    if (admin) {
-      req.user.admin = 'yes';
-      return callback('/admins/profile');
-    }
-    req.user.admin = 'no';
-    return callback('/users/submission');
+    next();
   });
+};
+
+helper.validateAdminUploadParameters = function(req, res, next) {
+  var parameters = ['languageID', 'assignmentID', 'courseCode'];
+  var errors = checkIfParametersExists(req.body, parameters);
+  if (errors.length > 0) {
+    return res.status(400).send(errors);
+  }
+  var correctId = Number(req.body.languageID) < compilers.length;
+  if (!correctId) {
+    return res.status(400).send({
+      message: 'The language does not exist',
+    });
+  }
+  checkTestFileCorrectness(req.body, function(err, result) {
+    if (err) {
+      return res.status(400).send(err);
+    }
+    if (result.length > 0) {
+      return res.status(400).send({
+        message: result,
+      });
+    }
+    next();
+  });
+};
+
+var checkTestFileCorrectness = function(body, done) {
+  var tempFolder = body.tempFolder;
+  var currentPath = path.join(__dirname, '../../');
+  var userFolder = body.userFolder;
+
+  var joinedPath = currentPath + tempFolder;
+
+  var dockerCommand = 'docker run -v ' + joinedPath + ':/' + tempFolder +
+    ' --name ' + tempFolder + ' -e tempfolder=./' + tempFolder + '/' + userFolder +
+    ' compile_sandbox_admin_upload';
+
+  exec(dockerCommand);
+  var intervalId = setInterval(function() {
+    fs.readFile(currentPath + tempFolder + '/' + userFolder + '/error.txt', 'utf8',
+      function(err, data) {
+      if (err) {
+        return;
+      }
+      clearInterval(intervalId);
+      return done(null, data);
+    });
+  }, 2000);
 };
 
 module.exports = helper;

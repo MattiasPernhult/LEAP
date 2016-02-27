@@ -4,7 +4,7 @@ var router = express.Router();
 
 // project packages
 var controller = require('../controllers/compiler_controller');
-var helper = require('../utils/helper');
+var helper = require('../utils/base_helper');
 
 router.post('/compile', helper.prepareUniqueFolder, helper.prepareBody,
   helper.validateSubmissionParameters,

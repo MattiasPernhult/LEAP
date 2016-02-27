@@ -4,10 +4,10 @@ var router = express.Router();
 
 // project packages
 var controller = require('../controllers/admin_controller');
-var helper = require('../utils/helper');
+var helper = require('../utils/base_helper');
 
 router.post('/upload', helper.prepareUniqueFolder, helper.prepareBody,
-helper.validteAdminUploadParameters, function(req, res) {
+helper.validateAdminUploadParameters, function(req, res) {
   controller.upload(req, res);
 });
 

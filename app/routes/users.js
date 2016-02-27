@@ -1,10 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-var helper = require('../utils/helper');
+var loginHelper = require('../utils/login_helper');
 
-router.get('/submission', helper.isLoggedIn, function(req, res, next) {
-  console.log(req.user);
+router.get('/submission', loginHelper.isLoggedIn, function(req, res, next) {
   res.render('user/submission');
 });
 
