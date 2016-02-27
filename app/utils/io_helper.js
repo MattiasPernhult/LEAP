@@ -13,6 +13,7 @@ ioHelper.createFolder = function(tempFolder, path, done) {
   });
 };
 
+// TODO: add error handling for the streams and arguments to callback
 ioHelper.copyFile = function(source, target, done) {
   var readStream = fs.createReadStream(source);
   var writeStream = fs.createWriteStream(target);
