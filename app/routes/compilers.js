@@ -6,10 +6,10 @@ var router = express.Router();
 var controller = require('../controllers/compiler_controller');
 var helper = require('../utils/helper');
 
-router.post('/compile', helper.prepareBody, helper.validateSubmissionParameters, function(req, res) {
-  console.log('KLARA DET');
-  return res.send('Klarar det');
-  // controller.compile(req, res);
+router.post('/compile', helper.prepareUniqueFolder, helper.prepareBody,
+  helper.validateSubmissionParameters,
+  function(req, res) {
+  controller.compile(req, res);
 });
 
 module.exports = router;
