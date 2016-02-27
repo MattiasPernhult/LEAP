@@ -2,7 +2,6 @@
 var Sandbox = require('../models/sandbox');
 var helper = require('../utils/helper');
 var compilers = require('../utils/compilers');
-var CustomStream = require('../models/custom_stream');
 
 var path = require('path');
 
