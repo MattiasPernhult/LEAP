@@ -17,6 +17,7 @@ helper.prepareUniqueFolder = function(req, res, next) {
   var tempFolder = helper.getRandomFolder();
   req.body.tempFolder = tempFolder;
   var currentPath = path.join(__dirname, '../../');
+  req.body.currentPath = currentPath;
 
   ioHelper.createFolder(tempFolder, currentPath, function(err) {
     if (err) {

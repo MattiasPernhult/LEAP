@@ -1,5 +1,5 @@
 var Sandbox = function(langID, assID, tempFold, currPath, langName, compComm,
-  usFi, teFi, teRu, dockIm, teRuLo, usFiCon, jaRu) {
+  usFi, teFi, teRu, dockIm, teRuLo, usFiCon, jaRu, userFold) {
   this.languageID = langID;
   this.assignmentID = assID;
   this.languageName = langName;
@@ -8,10 +8,11 @@ var Sandbox = function(langID, assID, tempFold, currPath, langName, compComm,
   this.testFile = teFi;
   this.testRunner = teRu;
   this.dockerImage = dockIm;
-  this.path = currPath + tempFold + '/';
+  this.tempFolder = tempFold;
+  this.joinedPath = currPath + tempFold + '/';
   this.testRunnerLocation = teRuLo;
-  this.userFileContent = new Buffer(usFiCon.toString(), 'base64').toString('ascii');
   this.javaRunner = jaRu;
+  this.userFolder = userFold;
 };
 
 Sandbox.prototype.compile = function(callback) {
@@ -38,8 +39,9 @@ Sandbox.prototype.setup = function(callback) {
     var rawTestfileContent = new Buffer(testfile[0].code.toString(), 'base64').toString('ascii');
     console.log(self.testRunnerLocation);
 
-    var locationForTestFile = self.path + self.testFile;
-    var locationForTestRunner = self.path + self.testRunner;
+    var locationForTestFile = self.joinedPath + '/' + self.userFolder + '/' + self.testFile;
+    var locationForTestRunner = self.joinedPath + '/' + self.userFolder + '/' + self.testRunner;
+    console.log(locationForTestFile);
 
     fs.writeFile(locationForTestFile, rawTestfileContent, function(err) {
       // TODO: error handling, no testrunner, probably 500 (Internal Server Error),
@@ -60,39 +62,38 @@ Sandbox.prototype.execute = function(callback) {
 
   var self = this;
 
-  var executeStatement = 'docker run -v ' + this.currentPath + this.tempFolder +
-    ':/' + this.tempFolder + ' --name ' + this.tempFolder + ' -e testfile=' +
-    this.testFile + ' -e javafile=' + this.userFile + ' -e testrunner=' + this.testRunner +
-    ' -e tempfolder=' + this.tempFolder + ' -e output=./output.txt' +
-    ' -e go=TestRunner ' + this.dockerImage;
+  var executeStatement = 'docker run -v ' + this.joinedPath + this.userFolder + ':/' +
+    this.tempFolder + '/' + this.userFolder + ' --name ' + this.tempFolder +
+    ' -e testfile=' + this.testFile + ' -e javafile=' + this.userFile + ' -e testrunner=' +
+    this.testRunner + ' -e tempfolder=' + this.tempFolder + '/' + this.userFolder +
+    ' -e output=./output.txt' + ' -e go=TestRunner ' + this.dockerImage;
 
   console.log(executeStatement);
 
-  exec(executeStatement, function(error, stdout, stderr) {
-    console.log('ERROR');
-    console.log('-------------');
-    console.log(error);
-    console.log('-------------');
-
-    console.log('STDERR');
-    console.log('-------------');
-    console.log(stderr);
-    console.log('-------------');
+  exec(executeStatement, function(err, stdout, stderr) {
+    if (stderr) {
+      var error = {
+        status: 400,
+        message: stderr,
+      };
+      exec('rm -rf ' + self.tempFolder);
+      exec('docker rm -v ' + self.tempFolder);
+      return callback(error, null);
+    }
+    fs.readFile(self.joinedPath + self.userFolder + '/output.txt', 'utf8', function(err, data) {
+      if (err) {
+        var error = {
+          status: 500,
+          message: err,
+        };
+        callback(error, data);
+      } else {
+        callback(err, {result: data});
+      }
+      exec('rm -rf ' + self.tempFolder);
+      exec('docker rm -v ' + self.tempFolder);
+    });
   });
-
-  var intervalId = setInterval(function() {
-    fs.readFile(self.currentPath + self.tempFolder + '/output.txt', 'utf8',
-      function(err, data) {
-        if (err) {
-          return;
-        }
-        callback(data);
-        clearInterval(intervalId);
-        exec('rm -rf ' + self.tempFolder);
-        exec('docker rm -v ' + self.tempFolder);
-      });
-
-  }, 2000);
 };
 
 module.exports = Sandbox;

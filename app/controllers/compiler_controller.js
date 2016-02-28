@@ -26,13 +26,14 @@ controller.compile = function(req, res) {
   // creating a new sandbox
   var sandbox = new Sandbox(languageID, assignmentID, tempFolder, currentPath,
     languageName, compileCommand, userFile, testFile, testRunner, dockerImage,
-    testRunnerLocation, userFileContent, javaRunner);
+    testRunnerLocation, userFileContent, javaRunner, req.body.userFolder);
 
   // starting the compiling of the source code
-  sandbox.compile(function(result) {
-    res.send({
-      result: result,
-    });
+  sandbox.compile(function(err, result) {
+    if (err) {
+      return res.status(err.status).send(err);
+    }
+    return res.send(result);
   });
 };
 
