@@ -1,0 +1,4 @@
+node_modules
+
+app/config/auth.js
+npm-debug.log
