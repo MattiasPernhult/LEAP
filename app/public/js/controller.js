@@ -5,7 +5,7 @@ angular.module('sandboxApp', [])
 })
 
 .service('fileUpload', ['$http', function($http) {
-  this.uploadFileToUrl = function(file, body, uploadUrl) {
+  this.uploadFileToUrl = function(file, body, uploadUrl, done) {
     var fd = new FormData();
     fd.append('file', file);
     // TODO: ta bort hårdkodningen
@@ -21,9 +21,11 @@ angular.module('sandboxApp', [])
     })
     .success(function(data) {
       console.log(data);
+      done(null, data);
     })
     .error(function(err) {
       console.log(err);
+      done(err, null);
     });
   };
 }, ])
@@ -48,12 +50,24 @@ angular.module('sandboxApp', [])
   $scope.uploadURL = 'http://localhost:3000/admins/upload';
 
   $scope.body = {};
+  $scope.showResult = false;
+  $scope.showError = false;
 
   $scope.uploadFile = function() {
     var file = $scope.myFile;
 
     var uploadUrl = 'http://localhost:3000/admins/upload';
-    fileUpload.uploadFileToUrl(file, $scope.body, uploadUrl);
+    fileUpload.uploadFileToUrl(file, $scope.body, uploadUrl, function(err, data) {
+      if (err) {
+        $scope.error = err.message;
+        $scope.showResult = false;
+        $scope.showError = true;
+      } else {
+        $scope.result = data;
+        $scope.showResult = true;
+        $scope.showError = false;
+      }
+    });
   };
 
 },]);

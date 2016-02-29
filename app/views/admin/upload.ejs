@@ -50,6 +50,8 @@
                   </select>
                 </div>
 
+                <div id=""></div>
+
                 <div class="form-group">
                   <input file-model="myFile" type="file" name="file" required/>
                 </div>
@@ -58,7 +60,29 @@
                 </div>
               </form>
 
-              <p>{{ctrl.result}}</p>
+              <div ng-show="showError" class="row">
+                <div class="col-lg-12">
+                  <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <pre class="pre-danger">
+                      <h3>Error occured</h3>
+                      <p>{{error}}</p>
+                    </pre>
+                  </div>
+                </div>
+              </div>
+
+              <div ng-show="showResult" class="row">
+                <div class="col-lg-12">
+                  <div class="alert alert-success">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <pre class="pre-success">
+                      <h3>Testfile uploaded</h3>
+                      <p>The id for the testfile is: <strong>{{result.id}}</strong></p>
+                    </pre>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
