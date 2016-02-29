@@ -13,6 +13,14 @@ ioHelper.createFolder = function(tempFolder, path, done) {
   });
 };
 
+ioHelper.removeTempFolder = function(tempFolder) {
+  exec('rm -rf ' + tempFolder);
+};
+
+ioHelper.removeTempContainer = function(tempContainer) {
+  exec('docker rm -v ' + tempContainer);
+};
+
 // TODO: add error handling for the streams and arguments to callback
 ioHelper.copyFile = function(source, target, done) {
   var readStream = fs.createReadStream(source);

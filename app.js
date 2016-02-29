@@ -7,7 +7,7 @@ var cookieParser = require('cookie-parser');
 var mongoose = require('mongoose');
 var busboy = require('connect-busboy');
 var passport = require('passport');
-var session  = require('express-session');
+var session = require('express-session');
 
 // project packages
 var admins = require('./app/routes/admins');
@@ -27,23 +27,25 @@ app.set('views', path.join(__dirname, './app/views'));
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false,
+}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'app/public')));
+app.use(express.static(__dirname + '/app/public'));
 app.use(busboy());
 
-// app.use('*', function(req, res, next) {
-//     res.header('Access-Control-Allow-Origin', '*');
-//     res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-//     res.header('Access-Control-Allow-Headers', 'Content-Type');
-//
-//     next();
-// });
+app.use('*', function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+  next();
+});
 
 app.use(session({
-    secret: 'ilovescodddsdklkloojijk',
-    saveUninitialized: false,
-    resave: false
+  secret: 'ilovodddsdkojijk',
+  saveUninitialized: false,
+  resave: false,
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -69,7 +71,7 @@ if (app.get('env') === 'development') {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
-      error: err
+      error: err,
     });
   });
 }
@@ -80,7 +82,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
-    error: {}
+    error: {},
   });
 });
 

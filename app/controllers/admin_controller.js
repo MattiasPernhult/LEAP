@@ -3,6 +3,7 @@ var fs = require('fs');
 
 // project packages
 var mongoService = require('../services/mongo_service');
+var ioHelper = require('../utils/io_helper');
 
 // variables
 var controller = {};
@@ -16,6 +17,8 @@ controller.upload = function(req, res) {
           message: err,
         });
       }
+
+      console.log(req.body);
       var fileContentInBase64 = new Buffer(fileContent).toString('base64');
       var testFile = {
         code: fileContentInBase64,
@@ -28,10 +31,11 @@ controller.upload = function(req, res) {
 
       mongoService.insertTestfile(testFile, function(err, result)  {
         if (err) {
-          console.log('ERROR');
           return res.status(500).send(err);
         }
         console.log('Testfile added: ' + result);
+        ioHelper.removeTempFolder(req.body.tempFolder);
+        ioHelper.removeTempContainer(req.body.tempFolder);
         return res.send(result);
       });
     });

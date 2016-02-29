@@ -14,6 +14,7 @@ helper.getRandomFolder = function() {
 };
 
 helper.prepareUniqueFolder = function(req, res, next) {
+  console.log('i prepare unique folder');
   var tempFolder = helper.getRandomFolder();
   req.body.tempFolder = tempFolder;
   var currentPath = path.join(__dirname, '../../');
@@ -28,6 +29,7 @@ helper.prepareUniqueFolder = function(req, res, next) {
 };
 
 helper.prepareBody = function(req, res, next) {
+  console.log('i prepareBody');
   req.pipe(req.busboy);
 
   req.busboy.on('field', function(fieldname, val) {
@@ -46,6 +48,7 @@ helper.prepareBody = function(req, res, next) {
           if (err) {
             return res.status(400).send({message: 'You must provide a zip file'});
           }
+          console.log('klara prepareBody');
           next();
         });
     });
