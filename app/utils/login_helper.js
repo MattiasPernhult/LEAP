@@ -3,7 +3,7 @@ var mongoService = require('../services/mongo_service');
 var loginHelper = {};
 
 loginHelper.isAdmin = function(req, callback) {
-  mongoService.isAdmin(req.user.google.email, function(err, admin) {
+  mongoService.getAdmin(req.user.google.email, function(err, admin) {
     if (err)  {
       return callback('/');
     }

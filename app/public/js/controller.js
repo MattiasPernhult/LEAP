@@ -1,3 +1,5 @@
+var hello;
+
 angular.module('sandboxApp', [])
 
 .config(function($httpProvider) {
@@ -49,7 +51,7 @@ angular.module('sandboxApp', [])
 .controller('UploadController', ['$scope', 'fileUpload', function($scope, fileUpload) {
   $scope.uploadURL = 'http://localhost:3000/admins/upload';
 
-  $scope.body = {};
+  $scope.body = {languageID: 'Java', courseCodes: hello};
   $scope.showResult = false;
   $scope.showError = false;
 

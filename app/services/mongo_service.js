@@ -53,7 +53,7 @@ var mongoService = function() {
     });
   };
 
-  var isAdmin = function(adminEmail, callback) {
+  var getAdmin = function(adminEmail, callback) {
     AdminSchema.findOne({
       email: adminEmail,
     }, function(err, admin) {
@@ -67,7 +67,7 @@ var mongoService = function() {
     findUserById: findUserById,
     findOne: findOne,
     saveGoogleUser: saveGoogleUser,
-    isAdmin: isAdmin,
+    getAdmin: getAdmin,
   };
 };
 

@@ -41,4 +41,18 @@ controller.upload = function(req, res) {
     });
 };
 
+controller.getCourseCodes = function(req, res) {
+  mongoService.getAdmin(req.user.google.email, function(err, admin) {
+    if (err) {
+      return res.redirect('/');
+    }
+    var vm = {
+      user: req.user,
+      active: 'dashboard',
+      courseCodes: admin.courseCodes,
+    };
+    res.render('admin/dashboard', vm);
+  });
+};
+
 module.exports = controller;

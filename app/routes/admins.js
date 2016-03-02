@@ -22,11 +22,7 @@ router.get('/upload', loginHelper.isLoggedIn, function(req, res) {
 });
 
 router.get('/dashboard', loginHelper.isLoggedIn, function(req, res) {
-  var vm = {
-    user: req.user,
-    active: 'dashboard',
-  };
-  res.render('admin/dashboard', vm);
+  controller.getCourseCodes(req, res);
 });
 
 module.exports = router;
