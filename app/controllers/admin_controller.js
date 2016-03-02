@@ -41,29 +41,19 @@ controller.upload = function(req, res) {
     });
 };
 
-controller.getCourseCodes = function(req, res) {
+controller.getCourseCodes = function(req, done) {
   mongoService.getAdmin(req.user.google.email, function(err, admin) {
-    if (err) {
-      return res.redirect('/');
-    }
-    var vm = {
-      user: req.user,
-      active: 'dashboard',
-      courseCodes: admin.courseCodes,
-    };
-    res.render('admin/dashboard', vm);
+    return done(err, admin);
   });
-
 };
 
 controller.getTestfiles = function(req, res) {
-  mongoService.getTestfilesForAdmin(req.user.google.email, function(err, data) {
+  mongoService.getTestfilesForAdmin(req.user.google.email, function(err, testfiles) {
     if (err) {
       return res.status(500).send(err);
     }
-    console.log('Testfiles for admin: ' + data);
     var response = {
-      result: data,
+      result: testfiles,
     };
     res.send(response);
   });

@@ -37,8 +37,10 @@
 
                 <div class="form-group {{ctrl.courseClass}}">
                   <label class="control-label" for="courseCode">Course code</label>
-                  <select ng-repeat="courseCode in body.courseCodes" ng-model="body.courseCode" class="form-control" name="courseCode" required>
-                    <option>{{courseCode}}</option>
+                  <select ng-model="body.courseCode" class="form-control" name="courseCode" required>
+                    <% for (var i = 0; i < courseCodes.length; i++) { %>
+                      <option><%= courseCodes[i] %></option>
+                    <% } %>
                   </select>
                 </div>
                 <div class="form-group {{ctrl.assignmentClass}}">
@@ -76,7 +78,9 @@
                   <div class="alert alert-success">
                     <pre class="pre-success">
                       <h3>Testfile uploaded</h3>
-                      <p>The id for the testfile is: <strong>{{result.id}}</strong></p>
+                      <p>The id for the testfile is:
+                        <strong>{{result.id}}</strong>
+                      </p>
                     </pre>
                   </div>
                 </div>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html ng-app="sandboxApp" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Compile Sandbox</title>
+
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/sb-admin.css" rel="stylesheet">
+  <link href="/css/plugins/morris.css" rel="stylesheet">
+  <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+  <script src="/js/jquery.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/lib/angular.js"></script>
+  <script src="/js/lib/angular-route.js"></script>
+  <script src="/js/controller.js"></script>
+</head>
+
+<body ng-controller="TestfilesController">
+
+  <div id="wrapper">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">Compile Sandbox</a>
+      </div>
+      <ul class="nav navbar-right top-nav">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <%= user.google.name %> <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="/logout"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav side-nav">
+          <li>
+            <a href="/admins/dashboard"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+          </li>
+          <li>
+            <a href="/admins/upload"><i class="fa fa-fw fa-file-code-o"></i> Upload testfile</a>
+          </li>
+          <li class="active">
+            <a href="/admins/render/testfiles"><i class="fa fa-fw fa-file-code-o"></i> My testfiles</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+
+    <div id="page-wrapper-margin">
+      <div class="container-fluid">
+
+        <div class="row">
+
+          <div ng-hide="detail" ng-repeat="testfile in testfiles" class="col-lg-6 col-md-6">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <div class="row">
+                  <div class="col-xs-3">
+                    <i class="fa fa-file-code-o fa-5x"></i>
+                  </div>
+                  <div class="col-xs-9 text-right">
+                    <div class="huge">{{testfile.assignmentID}}</div>
+                    <div>{{testfile.courseCode}}</div>
+                  </div>
+                </div>
+              </div>
+              <a ng-click="getDetails(testfile)" href="">
+                <div class="panel-footer">
+                  <span class="pull-left">View Details</span>
+                  <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                  <div class="clearfix"></div>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <div ng-show="detail">
+            <pre>
+            {{code}}
+            </pre>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

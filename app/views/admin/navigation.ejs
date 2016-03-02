@@ -35,6 +35,13 @@
       <% } %>
         <a href="/admins/upload"><i class="fa fa-fw fa-file-code-o"></i> Upload testfile</a>
       </li>
+      <% if (active === 'testfiles') { %>
+      <li class="active">
+      <% } else { %>
+      <li>
+      <% } %>
+        <a href="/admins/render/testfiles"><i class="fa fa-fw fa-file-code-o"></i> My testfiles</a>
+      </li>
     </ul>
   </div>
 </nav>
