@@ -61,6 +61,14 @@ var mongoService = function() {
     });
   };
 
+  var getTestfilesForAdmin = function(email, callback) {
+    TestfileSchema.find({
+      adminEmail: email,
+    }, function(err, testfiles) {
+      return callback(err, testfiles);
+    });
+  };
+
   return {
     insertTestfile: insertTestfile,
     getTestfileById: getTestfileById,
@@ -68,6 +76,7 @@ var mongoService = function() {
     findOne: findOne,
     saveGoogleUser: saveGoogleUser,
     isAdmin: isAdmin,
+    getTestfilesForAdmin: getTestfilesForAdmin,
   };
 };
 

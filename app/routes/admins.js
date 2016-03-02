@@ -29,4 +29,8 @@ router.get('/dashboard', loginHelper.isLoggedIn, function(req, res) {
   res.render('admin/dashboard', vm);
 });
 
+router.get('/testfiles', loginHelper.isLoggedIn, function(req, res) {
+  controller.getTestfiles(req, res);
+});
+
 module.exports = router;
