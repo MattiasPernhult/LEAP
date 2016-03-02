@@ -25,4 +25,8 @@ router.get('/dashboard', loginHelper.isLoggedIn, function(req, res) {
   controller.getCourseCodes(req, res);
 });
 
+router.get('/testfiles', loginHelper.isLoggedIn, function(req, res) {
+  controller.getTestfiles(req, res);
+});
+
 module.exports = router;

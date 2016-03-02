@@ -53,6 +53,20 @@ controller.getCourseCodes = function(req, res) {
     };
     res.render('admin/dashboard', vm);
   });
+
+};
+
+controller.getTestfiles = function(req, res) {
+  mongoService.getTestfilesForAdmin(req.user.google.email, function(err, data) {
+    if (err) {
+      return res.status(500).send(err);
+    }
+    console.log('Testfiles for admin: ' + data);
+    var response = {
+      result: data,
+    };
+    res.send(response);
+  });
 };
 
 module.exports = controller;
