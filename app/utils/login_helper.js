@@ -15,6 +15,7 @@ loginHelper.isAdmin = function(req, callback) {
     }
     if (admin) {
       req.user.admin = 'yes';
+      req.user.courseCode = admin.courseCode;
       return callback('/admins/dashboard');
     }
     req.user.admin = 'no';
