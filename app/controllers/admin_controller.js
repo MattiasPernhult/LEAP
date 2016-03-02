@@ -42,12 +42,15 @@ controller.upload = function(req, res) {
 };
 
 controller.getTestfiles = function(req, res) {
-  mongoService.getTestfilesForAdmin(req.user.google.email, function(err, result) {
+  mongoService.getTestfilesForAdmin(req.user.google.email, function(err, data) {
     if (err) {
       return res.status(500).send(err);
     }
-    console.log('Testfiles for admin: ' + result);
-    res.send(result);
+    console.log('Testfiles for admin: ' + data);
+    var response = {
+      result: data,
+    };
+    res.send(response);
   });
 };
 
