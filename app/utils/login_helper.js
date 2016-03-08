@@ -10,13 +10,12 @@ loginHelper.isAdmin = function(req, callback) {
     if (admin) {
       return callback('/admins/dashboard');
     }
-    return callback('/users/submission');
+    return callback('/users/dashboard');
   });
 };
 
 loginHelper.isLoggedIn = function(req, res, next) {
   if (req.isAuthenticated()) {
-    console.log('är inloggad');
     return next();
   }
   res.redirect('/');

@@ -69,6 +69,16 @@ var mongoService = function() {
     });
   };
 
+  var incrementCounterForAssignment = function(assignmentID, userEmail, success) {
+    var incrementObject = { $inc: {}};
+    if (success) {
+      incrementObject.$inc.success = 1;
+    } else {
+      incrementObject.$inc.failures = 1;
+    }
+    TestfileSchema.findByIdAndUpdate(assignmentID, incrementObject);
+  };
+
   return {
     insertTestfile: insertTestfile,
     getTestfileById: getTestfileById,
@@ -77,6 +87,7 @@ var mongoService = function() {
     saveGoogleUser: saveGoogleUser,
     getAdmin: getAdmin,
     getTestfilesForAdmin: getTestfilesForAdmin,
+    incrementCounterForAssignment: incrementCounterForAssignment,
   };
 };
 

@@ -1,6 +1,7 @@
 // project packages
 var Sandbox = require('../models/sandbox');
 var compilers = require('../utils/compilers');
+var mongoService = require('../services/mongo_service');
 
 // variables and packages
 var controller = {};
@@ -31,8 +32,10 @@ controller.compile = function(req, res) {
   // starting the compiling of the source code
   sandbox.compile(function(err, result) {
     if (err) {
+      mongoService.incrementCounterForAssignment(assignmentID, req.user.google.email, false);
       return res.status(err.status).send(err);
     }
+    mongoService.incrementCounterForAssignment(assignmentID, req.user.google.email, true);
     return res.send(result);
   });
 };

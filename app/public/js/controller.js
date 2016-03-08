@@ -11,8 +11,9 @@ angular.module('sandboxApp', [])
     // TODO: ta bort hårdkodningen
     fd.append('languageID', 0);
     fd.append('assignmentID', body.assignmentID);
-    fd.append('courseCode', body.courseCode);
-
+    if (body.courseCode) {
+      fd.append('courseCode', body.courseCode);
+    }
     $http.post(uploadUrl, fd, {
       transformRequest: angular.identity,
       headers: {
@@ -49,6 +50,30 @@ angular.module('sandboxApp', [])
 .controller('DashController', function($scope, $http) {
   console.log('dashController');
 })
+
+.controller('SubmitController', ['$scope', 'fileUpload', function($scope, fileUpload) {
+  $scope.uploadURL = 'http://localhost:3000/compilers/compile';
+  $scope.body = {languageID: 'Java'};
+  $scope.showResult = false;
+  $scope.showError = false;
+
+  $scope.submitAssignment = function() {
+    var file = $scope.myFile;
+
+    fileUpload.uploadFileToUrl(file, $scope.body, $scope.uploadURL, function(err, data) {
+      if (err) {
+        $scope.error = err.message;
+        $scope.showResult = false;
+        $scope.showError = true;
+      } else {
+        $scope.result = data;
+        $scope.showResult = true;
+        $scope.showError = false;
+      }
+    });
+  };
+
+},])
 
 .controller('UploadController', ['$scope', 'fileUpload', function($scope, fileUpload) {
   $scope.uploadURL = 'http://localhost:3000/admins/upload';

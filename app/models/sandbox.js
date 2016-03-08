@@ -78,15 +78,20 @@ Sandbox.prototype.execute = function(callback) {
       };
       exec('rm -rf ' + self.tempFolder);
       exec('docker rm -v ' + self.tempFolder);
+
       return callback(error, null);
     }
     fs.readFile(self.joinedPath + self.userFolder + '/output.txt', 'utf8', function(err, data) {
+      console.log('TYPEOF!!!!');
+      console.log(typeof data);
       if (err) {
         var error = {
           status: 500,
           message: err,
         };
         callback(error, data);
+      } else if (data.indexOf('failure') > -1) {
+        callback({status: 400, message: data}, null);
       } else {
         callback(err, {result: data});
       }
