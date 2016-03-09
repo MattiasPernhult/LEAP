@@ -36,6 +36,7 @@ controller.compile = function(req, res) {
       return res.status(err.status).send(err);
     }
     mongoService.incrementCounterForAssignment(assignmentID, req.user.google.email, true);
+    mongoService.addCompletedTestfileResultToUser(req.user.google.email, assignmentID);
     return res.send(result);
   });
 };

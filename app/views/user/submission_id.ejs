@@ -40,13 +40,25 @@
                   <label class="control-label" for="id">Assignment ID</label>
                   <input ng-model="assignmentID" type="text" class="form-control" name="id" placeholder="Assignment ID" required/>
                 </div>
-                  <input type="submit" class="btn btn-primary btn-block" />
-                </div>
-              </form>
+                <input ng-model="assignmentID" type="submit" class="btn btn-primary btn-block" />
             </div>
+            </form>
+
+            <div ng-show="<%= passed %>">
+              <div class="col-lg-12">
+                <div class="alert alert-success">
+                  <pre class="pre-success">
+                    <h3>Assignment Passed</h3>
+                    <p>You have already passed this assignment</p>
+                  </pre>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
+  </div>
 
   </div>
 </body>

@@ -102,6 +102,19 @@ var mongoService = function() {
       });
   };
 
+  var addCompletedTestfileResultToUser = function(userEmail, testfileId) {
+    UserSchema.findOneAndUpdate({
+      'google.email': userEmail,
+    }, {
+      $push: {
+        completedTestfiles: testfileId,
+      },
+    }, function(err, testfile) {
+      console.log(err);
+      console.log(testfile);
+    });
+  };
+
   return {
     insertTestfile: insertTestfile,
     getTestfileById: getTestfileById,
@@ -113,6 +126,7 @@ var mongoService = function() {
     incrementCounterForAssignment: incrementCounterForAssignment,
     findUserByEmail: findUserByEmail,
     addCompletedQuizResultToUser: addCompletedQuizResultToUser,
+    addCompletedTestfileResultToUser: addCompletedTestfileResultToUser,
   };
 };
 

@@ -4,6 +4,23 @@ angular.module('sandboxApp', [])
   $httpProvider.defaults.useXDomain = true;
 })
 
+.service('Service', function() {
+  var assignmentID;
+
+  var setAssignmentID = function(id) {
+    assignmentID = id;
+  };
+
+  var getAssignmentID = function() {
+    return assignmentID;
+  };
+
+  return {
+    setAssignmentID: setAssignmentID,
+    getAssignmentID: getAssignmentID,
+  };
+})
+
 .service('fileUpload', ['$http', function($http) {
   this.uploadFileToUrl = function(file, body, uploadUrl, done) {
     var fd = new FormData();
@@ -51,24 +68,19 @@ angular.module('sandboxApp', [])
   console.log('dashController');
 })
 
-.controller('SubmitIDController', function($scope, $http) {
+.controller('SubmitIDController', function($scope, Service) {
 
-  $scope.get = function() {
-    var url = 'http://localhost:3000/users/submission/' + $scope.assignmentID;
-    $http.get(url)
-      .success(function(result) {
-        console.log(result);
-      })
-      .error(function(err, status) {
-        console.log(err);
-      });
-  };
+  $scope.$watch('assignmentID', function(newValue, oldValue) {
+    console.log(newValue);
+    Service.setAssignmentID(newValue);
+    console.log(Service.getAssignmentID());
+  });
 })
 
-.controller('SubmitController', ['$scope', 'fileUpload', function($scope, fileUpload) {
+.controller('SubmitController', function($scope, fileUpload, Service) {
   $scope.uploadURL = 'http://localhost:3000/compilers/compile';
   $scope.body = {
-    languageID: 'Java'
+    languageID: 'Java',
   };
   $scope.showResult = false;
   $scope.showError = false;
@@ -78,7 +90,7 @@ angular.module('sandboxApp', [])
 
     fileUpload.uploadFileToUrl(file, $scope.body, $scope.uploadURL, function(err, data) {
       if (err) {
-        $scope.error = errorMessage;
+        $scope.error = err.message;
         $scope.showResult = false;
         $scope.showError = true;
       } else {
@@ -89,14 +101,14 @@ angular.module('sandboxApp', [])
     });
   };
 
-}, ])
+})
 
 .controller('UploadController', ['$scope', 'fileUpload', function($scope, fileUpload) {
   $scope.uploadURL = 'http://localhost:3000/admins/upload';
 
   $scope.body = {
     languageID: 'Java',
-    courseCodes: undefined
+    courseCodes: undefined,
   };
   $scope.showResult = false;
   $scope.showError = false;
@@ -156,7 +168,7 @@ angular.module('sandboxApp', [])
   var Base64 = {
     _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
     encode: function(e) {
-      var t = "";
+      var t = '';
       var n, r, i, s, o, u, a;
       var f = 0;
       e = Base64._utf8_encode(e);

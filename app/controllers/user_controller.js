@@ -48,18 +48,25 @@ controller.get = function(req, res) {
         return res.redirect('/quiz');
       }
 
-      // // quiz är klarad kolla om testfilen är klarad
-      // for (var j = 0; j < completedTestfiles.length; j++) {
-      //   var testfilesId = completedTestfiles[i];
-      //   if (testfilesId === req.params.id) {
-      //     // hittat den, dvs användaren har klarat testfilen
-      //     isTestfileCompleted = true;
-      //   }
-      // }
-      // if (!isTestfileCompleted) {
-      //   // testfile är inte klarade skicka testfile till användaren
-      // }
-      // // assignment är redan klarad för denna student, meddela detta till studenten
+      // quiz är klarad kolla om testfilen är klarad
+      for (var j = 0; j < completedTestfiles.length; j++) {
+        var testfilesId = completedTestfiles[i];
+        if (testfilesId === req.params.id) {
+          // hittat den, dvs användaren har klarat testfilen
+          isTestfileCompleted = true;
+        }
+      }
+      if (!isTestfileCompleted) {
+        // testfile är inte klarade skicka testfile till användaren
+        return res.redirect('/users/testfiles/submission');
+      }
+      // assignment är redan klarad för denna student, meddela detta till studenten
+      var vm = {
+        user: req.user,
+        active: 'submission',
+        passed: true,
+      };
+      return res.render('user/submission_id', vm);
     });
   });
 };
