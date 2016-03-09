@@ -62,7 +62,7 @@ angular.module('sandboxApp', [])
 
     fileUpload.uploadFileToUrl(file, $scope.body, $scope.uploadURL, function(err, data) {
       if (err) {
-        $scope.error = err.message;
+        $scope.error = errorMessage;
         $scope.showResult = false;
         $scope.showError = true;
       } else {
@@ -88,7 +88,17 @@ angular.module('sandboxApp', [])
     var uploadUrl = 'http://localhost:3000/admins/upload';
     fileUpload.uploadFileToUrl(file, $scope.body, uploadUrl, function(err, data) {
       if (err) {
-        $scope.error = err.message;
+        var errorMessage = '';
+        if (angular.isArray(err)) {
+          console.log('array');
+          for (var i = 0; i < err.length; i++) {
+            var message = err[i].message;
+            errorMessage += message + '\n';
+          }
+        } else {
+          errorMessage = err.message;
+        }
+        $scope.error = errorMessage;
         $scope.showResult = false;
         $scope.showError = true;
       } else {
