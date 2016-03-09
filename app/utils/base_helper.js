@@ -55,7 +55,7 @@ helper.prepareBody = function(req, res, next) {
   });
 };
 
-var checkIfParametersExists = function(body, parameters) {
+helper.checkIfParametersExists = function(body, parameters) {
   var errors = [];
   for (var index in parameters) {
     var parameter = parameters[index];
@@ -86,7 +86,7 @@ var checkParametersCorrectness = function(body, done) {
 };
 
 helper.validateSubmissionParameters = function(req, res, next) {
-  var errors = checkIfParametersExists(req.body, ['languageID', 'assignmentID']);
+  var errors = helper.checkIfParametersExists(req.body, ['languageID', 'assignmentID']);
   if (errors.length > 0) {
     return res.status(400).send(errors);
   }
@@ -100,7 +100,7 @@ helper.validateSubmissionParameters = function(req, res, next) {
 
 helper.validateAdminUploadParameters = function(req, res, next) {
   var parameters = ['languageID', 'assignmentID', 'courseCode'];
-  var errors = checkIfParametersExists(req.body, parameters);
+  var errors = helper.checkIfParametersExists(req.body, parameters);
   if (errors.length > 0) {
     return res.status(400).send(errors);
   }

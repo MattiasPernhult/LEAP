@@ -29,6 +29,12 @@ var mongoService = function() {
     });
   };
 
+  var findUserByEmail = function(userEmail, callback) {
+    UserSchema.findOne({'google.email': userEmail}, function(err, user) {
+      return callback(err, user);
+    });
+  };
+
   var findUserById = function(id, callback) {
     UserSchema.findById(id, function(err, user) {
       callback(err, user);
@@ -88,6 +94,7 @@ var mongoService = function() {
     getAdmin: getAdmin,
     getTestfilesForAdmin: getTestfilesForAdmin,
     incrementCounterForAssignment: incrementCounterForAssignment,
+    findUserByEmail: findUserByEmail,
   };
 };
 

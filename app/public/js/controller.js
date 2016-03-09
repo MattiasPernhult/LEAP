@@ -51,6 +51,20 @@ angular.module('sandboxApp', [])
   console.log('dashController');
 })
 
+.controller('SubmitIDController', function($scope, $http) {
+
+  $scope.get = function() {
+    var url = 'http://localhost:3000/users/submission/' + $scope.assignmentID;
+    $http.get(url)
+    .success(function(result) {
+      console.log(result);
+    })
+    .error(function(err, status) {
+      console.log(err);
+    });
+  };
+})
+
 .controller('SubmitController', ['$scope', 'fileUpload', function($scope, fileUpload) {
   $scope.uploadURL = 'http://localhost:3000/compilers/compile';
   $scope.body = {languageID: 'Java'};

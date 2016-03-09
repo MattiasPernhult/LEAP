@@ -9,6 +9,7 @@ var TestfileSchema = new mongoose.Schema({
   assignmentID: String,
   failures: {type: Number, default: 0},
   success: {type: Number, default: 0},
+  quiz: {type: String, default: 'nodejs'},
 });
 
 module.exports = mongoose.model('Testfile', TestfileSchema);

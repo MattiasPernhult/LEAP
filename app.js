@@ -43,7 +43,7 @@ app.use('*', function(req, res, next) {
 });
 
 app.use(session({
-  secret: 'ilovodddsdkojijk',
+  secret: 'ilovoddddasldkalsdkalsalsjdsaksdkojijk',
   saveUninitialized: false,
   resave: false,
 }));
