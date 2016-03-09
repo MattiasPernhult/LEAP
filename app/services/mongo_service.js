@@ -30,7 +30,9 @@ var mongoService = function() {
   };
 
   var findUserByEmail = function(userEmail, callback) {
-    UserSchema.findOne({'google.email': userEmail}, function(err, user) {
+    UserSchema.findOne({
+      'google.email': userEmail,
+    }, function(err, user) {
       return callback(err, user);
     });
   };
@@ -76,13 +78,28 @@ var mongoService = function() {
   };
 
   var incrementCounterForAssignment = function(assignmentID, userEmail, success) {
-    var incrementObject = { $inc: {}};
+    var incrementObject = {
+      $inc: {},
+    };
     if (success) {
       incrementObject.$inc.success = 1;
     } else {
       incrementObject.$inc.failures = 1;
     }
     TestfileSchema.findByIdAndUpdate(assignmentID, incrementObject);
+  };
+
+  var addCompletedQuizResultToUser = function(userEmail, quizId, callback) {
+    UserSchema.findOneAndUpdate({
+        'google.email': userEmail,
+      }, {
+        $push: {
+          completedQuizzes: quizId,
+        },
+      },
+      function(err, result) {
+        callback(err, result);
+      });
   };
 
   return {
@@ -95,6 +112,7 @@ var mongoService = function() {
     getTestfilesForAdmin: getTestfilesForAdmin,
     incrementCounterForAssignment: incrementCounterForAssignment,
     findUserByEmail: findUserByEmail,
+    addCompletedQuizResultToUser: addCompletedQuizResultToUser,
   };
 };
 

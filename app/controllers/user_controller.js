@@ -25,14 +25,11 @@ controller.get = function(req, res) {
         message: 'There are no assignment with the provided id',
       });
     }
-    console.log(testfile);
     var assignmentQuizId = testfile[0].quiz;
-    console.log(req.user.google.email);
     mongoService.findUserByEmail(req.user.google.email, function(err, user) {
       if (err) {
         return res.status(500).send({message: 'I need a break and so do you!'});
       }
-      console.log(user);
       var completedQuizzes = user.completedQuizzes;
       var completedTestfiles = user.completedTestfiles;
       var isQuizCompleted = false;
@@ -48,7 +45,7 @@ controller.get = function(req, res) {
         // quiz är inte klarade skicka quiz till användaren
         // skapa quizzen
         // skicka användaren till första frågan
-        return res.redirect('/quiz?count=3&time=5&percentage=50');
+        return res.redirect('/quiz');
       }
 
       // // quiz är klarad kolla om testfilen är klarad

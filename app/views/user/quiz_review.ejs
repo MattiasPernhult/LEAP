@@ -21,7 +21,7 @@
 
 </head>
 
-<body ng-controller="SubmitIDController">
+<body ng-controller="ReviewController">
 
   <div id="wrapper">
     <% include navigation.ejs %>
@@ -34,19 +34,21 @@
 
               <h2>Quiz results</h2>
 
-              <h4>Results for <%= results.stats.quiz.uname %></h4>
-              <p>Score in the <%= results.stats.quiz.name %> test:</p>
-              <ul>
-                <li>Questions given: <%= results.stats.total %></li>
-                <li>Pass percentage required: <%= results.stats.quiz.perc %>%</li>
-                <li>Questions that don't require grading: <%= results.stats.ungraded %></li>
+              <p><%= results.correct %></p>
+              <p><%= results.total %></p>
+              <p><%= results.percentage %></p>
+              <p><%= results.pass %></p>
 
-                <li>Correctly answered: <%= results.stats.correct %> questions</li>
-                <li>Pass percentage obtained: <%= results.stats.perc %>%</li>
-                <li>Questions that require human intervention: <%= results.stats.unevaluated.length %></li>
-                <li>Is grade final? <% if(results.stats.unevaluated.length) { %>No<% } else { %>Yes<%}%></li>
-                <li>Test result: <% if(results.stats.pass) { %>Success<% } else { %>Failed<%}%></li>
-              </ul>
+              <form ng-hide="<%= results.pass %>" method="get" action="/quiz">
+                <div class="form-group">
+                  <input value="Try again" type="submit" class="btn btn-primary" />
+                </div>
+              </form>
+              <form ng-show="<%= results.pass %>" method="get" action="users/testfiles/submission">
+                <div class="form-group">
+                  <input value="Proceed" type="submit" class="btn btn-primary" />
+                </div>
+              </form>
 
             </div>
           </div>
