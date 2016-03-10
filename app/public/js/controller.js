@@ -257,18 +257,16 @@ angular.module('sandboxApp', [])
   }
 
   $scope.detail = false;
-  $http.get('/admins/testfiles')
-    .success(function(testfiles) {
-      console.log(testfiles);
-      $scope.testfiles = testfiles.result;
+  $http.get('/admins/assignments')
+    .success(function(assignments) {
+      $scope.assignments = assignments.result;
     })
     .error(function(error, status) {
       console.log(error);
     });
 
-  $scope.getDetails = function(testfile) {
+  $scope.getDetails = function(assignment) {
     $scope.detail = true;
-    console.log(testfile);
-    $scope.code = Base64.decode(testfile.code);
+    $scope.code = Base64.decode(assignment.testfile);
   };
 });

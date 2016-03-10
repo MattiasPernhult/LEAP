@@ -9,6 +9,8 @@ router.get('/submission', loginHelper.isLoggedIn, function(req, res, next) {
     user: req.user,
     active: 'submission',
     passed: false,
+    error: false,
+    errorMessage: null,
   };
   res.render('user/submission_id', vm);
 });
@@ -22,7 +24,6 @@ router.get('/testfiles/submission', loginHelper.isLoggedIn, function(req, res) {
 });
 
 router.get('/submissions', loginHelper.isLoggedIn, function(req, res) {
-  console.log('i submissions');
   controller.get(req, res);
 });
 

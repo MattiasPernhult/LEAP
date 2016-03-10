@@ -1,11 +1,11 @@
 // project packages
-var TestfileSchema = require('../schemas/testfile');
+var TestfileSchema = require('../schemas/assignment');
 var UserSchema = require('../schemas/user');
 var AdminSchema = require('../schemas/admin');
 
 var mongoService = function() {
 
-  var insertTestfile = function(file, callback) {
+  var insertAssignment = function(file, callback) {
     var testfile = new TestfileSchema(file);
     testfile.save(function(err, response) {
       if (err)  {
@@ -18,10 +18,8 @@ var mongoService = function() {
     });
   };
 
-  var getTestfileById = function(id, callback)  {
-    TestfileSchema.find({
-      _id: id,
-    }, function(err, testfile) {
+  var getAssignmentById = function(id, callback)  {
+    TestfileSchema.findById(id, function(err, testfile) {
       if (err) {
         return callback(err, null);
       }
@@ -69,7 +67,7 @@ var mongoService = function() {
     });
   };
 
-  var getTestfilesForAdmin = function(email, callback) {
+  var getAssignmentsForAdmin = function(email, callback) {
     TestfileSchema.find({
       adminEmail: email,
     }, function(err, testfiles) {
@@ -116,13 +114,13 @@ var mongoService = function() {
   };
 
   return {
-    insertTestfile: insertTestfile,
-    getTestfileById: getTestfileById,
+    insertAssignment: insertAssignment,
+    getAssignmentById: getAssignmentById,
     findUserById: findUserById,
     findOne: findOne,
     saveGoogleUser: saveGoogleUser,
     getAdmin: getAdmin,
-    getTestfilesForAdmin: getTestfilesForAdmin,
+    getAssignmentsForAdmin: getAssignmentsForAdmin,
     incrementCounterForAssignment: incrementCounterForAssignment,
     findUserByEmail: findUserByEmail,
     addCompletedQuizResultToUser: addCompletedQuizResultToUser,

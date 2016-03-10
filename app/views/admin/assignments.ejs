@@ -53,7 +53,7 @@
             <a href="/admins/upload"><i class="fa fa-fw fa-file-code-o"></i> Upload testfile</a>
           </li>
           <li class="active">
-            <a href="/admins/render/testfiles"><i class="fa fa-fw fa-file-code-o"></i> My testfiles</a>
+            <a href="/admins/render/assignments"><i class="fa fa-fw fa-file-code-o"></i> My testfiles</a>
           </li>
         </ul>
       </div>
@@ -65,7 +65,7 @@
 
         <div class="row">
 
-          <div ng-hide="detail" ng-repeat="testfile in testfiles" class="col-lg-6 col-md-6">
+          <div ng-hide="detail" ng-repeat="assignment in assignments" class="col-lg-6 col-md-6">
             <div class="panel panel-primary">
               <div class="panel-heading">
                 <div class="row">
@@ -73,12 +73,12 @@
                     <i class="fa fa-file-code-o fa-5x"></i>
                   </div>
                   <div class="col-xs-9 text-right">
-                    <div class="huge">{{testfile.assignmentID}}</div>
-                    <div>{{testfile.courseCode}}</div>
+                    <div class="huge">{{assignment.assignmentID}}</div>
+                    <div>{{assignment.courseCode}}</div>
                   </div>
                 </div>
               </div>
-              <a ng-click="getDetails(testfile)" href="">
+              <a ng-click="getDetails(assignment)" href="">
                 <div class="panel-footer">
                   <span class="pull-left">View Details</span>
                   <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>

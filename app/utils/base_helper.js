@@ -69,14 +69,13 @@ helper.checkIfParametersExists = function(body, parameters) {
 };
 
 var checkParametersCorrectness = function(body, done) {
-  mongoService.getTestfileById(body.assignmentID, function(err, testfile) {
-    if (!testfile) {
+  mongoService.getAssignmentById(body.assignmentID, function(err, assignment) {
+    if (!assignment) {
       return done({
-        message: 'There are no testfile with this assignment id',
+        message: 'There are no assignment with this assignment id',
       });
     }
-    console.log(typeof body.languageID);
-    if (Number(body.languageID) !== testfile[0].languageID) {
+    if (Number(body.languageID) !== assignment.languageID) {
       return done({
         message: 'The assignment id has a different language id',
       });

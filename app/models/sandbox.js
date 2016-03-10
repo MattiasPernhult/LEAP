@@ -31,12 +31,12 @@ Sandbox.prototype.setup = function(callback) {
 
   var self = this;
 
-  mongoService.getTestfileById(this.assignmentID, function(err, testfile) {
+  mongoService.getAssignmentById(this.assignmentID, function(err, assignment) {
     if (err) {
       console.log(err);
       // kunde inte hitta testfilen, rätt id?
     }
-    var rawTestfileContent = new Buffer(testfile[0].code.toString(), 'base64').toString('ascii');
+    var rawTestfileContent = new Buffer(assignment.testfile.toString(), 'base64').toString('ascii');
     console.log(self.testRunnerLocation);
 
     var locationForTestFile = self.joinedPath + '/' + self.userFolder + '/' + self.testFile;
@@ -82,8 +82,6 @@ Sandbox.prototype.execute = function(callback) {
       return callback(error, null);
     }
     fs.readFile(self.joinedPath + self.userFolder + '/output.txt', 'utf8', function(err, data) {
-      console.log('TYPEOF!!!!');
-      console.log(typeof data);
       if (err) {
         var error = {
           status: 500,

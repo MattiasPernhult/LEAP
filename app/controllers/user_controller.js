@@ -8,27 +8,41 @@ var controller = {};
 controller.get = function(req, res) {
   // kolla i mongo i vilket läge som användaren är i, quiz eller test
   // om användaren inte har klarat quiz, då ska vi skapa quiz och skicka till användaren
-
+  var vm = {
+    user: req.user,
+    active: 'submission',
+    passed: false,
+    error: false,
+    errorMessage: null,
+  };
   // kolla om id finns med
   var parameters = ['id'];
   var errors = baseHelper.checkIfParametersExists(req.query, parameters);
   if (errors.length > 0) {
-    return res.status(400).send(errors);
+    vm.error = true;
+    vm.errorMessage = errors;
+    return res.render('user/submission_id', vm);
   }
   // kolla att det finns en assignment med ID:et
-  mongoService.getTestfileById(req.query.id, function(err, testfile) {
+  mongoService.getAssignmentById(req.query.id, function(err, assignment) {
+    console.log(err);
+    console.log(assignment);
     if (err) {
-      return res.status(500).send({message: 'I need a break and so do you!'});
+      vm.error = true;
+      vm.errorMessage = err;
+      return res.render('user/submission_id', vm);
     }
-    if (!testfile) {
-      return res.status(400).send({
-        message: 'There are no assignment with the provided id',
-      });
+    if (!assignment) {
+      vm.error = true;
+      vm.errorMessage = 'No assignment exists for the specified id';
+      return res.render('user/submission_id', vm);
     }
-    var assignmentQuizId = testfile[0].quiz;
+    var assignmentQuizId = assignment.quiz;
     mongoService.findUserByEmail(req.user.google.email, function(err, user) {
       if (err) {
-        return res.status(500).send({message: 'I need a break and so do you!'});
+        vm.error = true;
+        vm.errorMessage = err;
+        return res.render('user/submission_id', vm);
       }
       var completedQuizzes = user.completedQuizzes;
       var completedTestfiles = user.completedTestfiles;
@@ -61,11 +75,7 @@ controller.get = function(req, res) {
         return res.redirect('/users/testfiles/submission');
       }
       // assignment är redan klarad för denna student, meddela detta till studenten
-      var vm = {
-        user: req.user,
-        active: 'submission',
-        passed: true,
-      };
+      vm.passed = true;
       return res.render('user/submission_id', vm);
     });
   });

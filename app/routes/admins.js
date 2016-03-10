@@ -34,16 +34,16 @@ router.get('/dashboard', loginHelper.isLoggedIn, function(req, res) {
   res.render('admin/dashboard', vm);
 });
 
-router.get('/render/testfiles', loginHelper.isLoggedIn, function(req, res) {
+router.get('/render/assignments', loginHelper.isLoggedIn, function(req, res) {
   var vm = {
     user: req.user,
-    active: 'testfiles',
+    active: 'assignments',
   };
-  res.render('admin/testfiles', vm);
+  res.render('admin/assignments', vm);
 });
 
-router.get('/testfiles', loginHelper.isLoggedIn, function(req, res) {
-  controller.getTestfiles(req, res);
+router.get('/assignments', loginHelper.isLoggedIn, function(req, res) {
+  controller.getAssignments(req, res);
 });
 
 module.exports = router;

@@ -20,8 +20,8 @@ controller.upload = function(req, res) {
 
       console.log(req.body);
       var fileContentInBase64 = new Buffer(fileContent).toString('base64');
-      var testFile = {
-        code: fileContentInBase64,
+      var assignment = {
+        testfile: fileContentInBase64,
         adminName: req.user.google.name,
         adminEmail: req.user.google.email,
         languageID: req.body.languageID,
@@ -29,11 +29,11 @@ controller.upload = function(req, res) {
         assignmentID: req.body.assignmentID,
       };
 
-      mongoService.insertTestfile(testFile, function(err, result)  {
+      mongoService.insertAssignment(assignment, function(err, result)  {
         if (err) {
           return res.status(500).send(err);
         }
-        console.log('Testfile added: ' + result);
+        console.log('Assignment added: ' + result);
         ioHelper.removeTempFolder(req.body.tempFolder);
         ioHelper.removeTempContainer(req.body.tempFolder);
         return res.send(result);
@@ -47,13 +47,13 @@ controller.getCourseCodes = function(req, done) {
   });
 };
 
-controller.getTestfiles = function(req, res) {
-  mongoService.getTestfilesForAdmin(req.user.google.email, function(err, testfiles) {
+controller.getAssignments = function(req, res) {
+  mongoService.getAssignmentsForAdmin(req.user.google.email, function(err, assignments) {
     if (err) {
       return res.status(500).send(err);
     }
     var response = {
-      result: testfiles,
+      result: assignments,
     };
     res.send(response);
   });

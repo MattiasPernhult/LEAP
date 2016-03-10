@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
-var TestfileSchema = new mongoose.Schema({
-  code: String,
+var AssignmentSchema = new mongoose.Schema({
+  testfile: String,
   adminName: String,
   adminEmail: String,
   languageID: Number,
@@ -12,4 +12,4 @@ var TestfileSchema = new mongoose.Schema({
   quiz: {type: String, default: 'nodejs'},
 });
 
-module.exports = mongoose.model('Testfile', TestfileSchema);
+module.exports = mongoose.model('Assignment', AssignmentSchema);
