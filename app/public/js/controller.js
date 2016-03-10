@@ -31,6 +31,7 @@ angular.module('sandboxApp', [])
     if (body.courseCode) {
       fd.append('courseCode', body.courseCode);
     }
+    fd.append('quiz', body.quiz);
     $http.post(uploadUrl, fd, {
         transformRequest: angular.identity,
         headers: {
@@ -106,6 +107,64 @@ angular.module('sandboxApp', [])
 .controller('UploadController', ['$scope', 'fileUpload', function($scope, fileUpload) {
   $scope.uploadURL = 'http://localhost:3000/admins/upload';
 
+  $scope.quiz = {
+    show: false,
+    questions: [],
+    numberOfQuestions: 5,
+    time: 10,
+    percentage: 50,
+  };
+
+  $scope.question = {
+    type: '0 - One correct answer',
+    answers: {},
+    opts: [],
+    correct: [],
+    correctAnswers: {},
+  };
+
+  $scope.nextQuestion = function() {
+    $scope.question.qid = $scope.quiz.questions.length;
+    $scope.question.graded = true;
+    $scope.question.desc = null;
+    if (!$scope.question.code) {
+      $scope.question.code = null;
+    }
+    $scope.question.lang = null;
+    if ($scope.question.type === '0 - One correct answer') {
+      $scope.question.correct.push(Number($scope.question.correctAnswer));
+    } else {
+      for (var index in $scope.question.correctAnswers) {
+        console.log(index);
+        if ($scope.question.correctAnswers[index]) {
+          if (index === 'answerOne') {
+            $scope.question.correct.push(0);
+          } else if (index === 'answerTwo') {
+            $scope.question.correct.push(1);
+          } else if (index === 'answerThree') {
+            $scope.question.correct.push(2);
+          } else if (index === 'answerFour') {
+            $scope.question.correct.push(3);
+          }
+        }
+      }
+    }
+    for (var iterator in $scope.question.answers) {
+      $scope.question.opts.push($scope.question.answers[iterator]);
+    }
+    $scope.quiz.questions.push($scope.question);
+    $scope.question = {
+      type: '0 - One correct answer',
+      answers: {},
+      opts: [],
+      correct: [],
+      correctAnswers: {},
+      title: '',
+      code: '',
+    };
+    return;
+  };
+
   $scope.body = {
     languageID: 'Java',
     courseCodes: undefined,
@@ -115,6 +174,7 @@ angular.module('sandboxApp', [])
 
   $scope.uploadFile = function() {
     var file = $scope.myFile;
+    $scope.body.quiz = $scope.quiz;
 
     var uploadUrl = 'http://localhost:3000/admins/upload';
     fileUpload.uploadFileToUrl(file, $scope.body, uploadUrl, function(err, data) {

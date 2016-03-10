@@ -11,7 +11,8 @@ var ioHelper = require('../utils/io_helper');
 router.post('/upload', loginHelper.isLoggedIn, ioHelper.removeTempFolderAndContainer,
 helper.prepareUniqueFolder, helper.prepareBody, helper.validateAdminUploadParameters,
 function(req, res) {
-  controller.upload(req, res);
+  console.log(req.body.quiz.questions);
+  //controller.upload(req, res);
 });
 
 router.get('/upload', loginHelper.isLoggedIn, function(req, res) {

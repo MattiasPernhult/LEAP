@@ -149,7 +149,7 @@ helper.validateAdminUploadParameters = function(req, res, next) {
         });
       }
       if (req.body.quiz) {
-        var errors = validateQuiz(req.body.quiz)
+        var errors = validateQuiz(req.body.quiz);
         if (errors.length > 0) {
           return res.status(400).send(errors);
         }
