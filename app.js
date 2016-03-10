@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 var busboy = require('connect-busboy');
 var passport = require('passport');
 var session = require('express-session');
+var fsExtra = require('fs-extra');
 
 // project packages
 var admins = require('./app/routes/admins');
@@ -85,5 +86,15 @@ app.use(function(err, req, res, next) {
     error: {},
   });
 });
+
+setInterval(function emptyQuizResultsFolder() {
+  fsExtra.emptyDir('./results', function(err) {
+    if (err) {
+      console.log('Could not empty /results folder');
+    } else {
+      console.log('Successfully emptied the /result folder');
+    }
+  });
+}, 60 * 60 * 1000);
 
 module.exports = app;
