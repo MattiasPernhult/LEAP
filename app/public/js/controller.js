@@ -31,7 +31,11 @@ angular.module('sandboxApp', [])
     if (body.courseCode) {
       fd.append('courseCode', body.courseCode);
     }
-    fd.append('quiz', JSON.stringify(body.quiz));
+    if (body.quiz) {
+      if (body.quiz.show) {
+        fd.append('quiz', JSON.stringify(body.quiz));
+      }
+    }
     $http.post(uploadUrl, fd, {
         transformRequest: angular.identity,
         headers: {
@@ -240,10 +244,11 @@ angular.module('sandboxApp', [])
     var file = $scope.myFile;
     $scope.body.quiz = $scope.quiz;
 
-    if (!$scope.validateQuiz($scope.body.quiz)) {
-      return;
+    if ($scope.quiz.show) {
+      if (!$scope.validateQuiz($scope.body.quiz)) {
+        return;
+      }
     }
-
     $scope.showError = false;
 
     var uploadUrl = 'http://localhost:3000/admins/upload';

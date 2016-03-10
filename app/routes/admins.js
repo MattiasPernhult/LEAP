@@ -11,13 +11,15 @@ var ioHelper = require('../utils/io_helper');
 router.post('/upload', loginHelper.isLoggedIn, ioHelper.removeTempFolderAndContainer,
 helper.prepareUniqueFolder, helper.prepareBody, helper.validateAdminUploadParameters,
 function(req, res) {
-  console.log(req.body.quiz.questions);
-  for (var i = 0; i < req.body.quiz.questions.length; i++) {
-    delete req.body.quiz.questions[i].correctAnswers;
-    delete req.body.quiz.questions[i].answers;
-    delete req.body.quiz.questions[i].correctAnswer;
+  console.log(req.body);
+  if (req.body.quiz) {
+    for (var i = 0; i < req.body.quiz.questions.length; i++) {
+      delete req.body.quiz.questions[i].correctAnswers;
+      delete req.body.quiz.questions[i].answers;
+      delete req.body.quiz.questions[i].correctAnswer;
+    }
   }
-  console.log(req.body.quiz.questions);
+  console.log(req.body);
   controller.upload(req, res);
 });
 

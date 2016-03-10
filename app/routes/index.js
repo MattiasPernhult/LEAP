@@ -6,9 +6,6 @@ var loginHelper = require('../utils/login_helper');
 var controller = require('../controllers/controller');
 
 router.get('/quiz', loginHelper.isLoggedIn, function(req, res) {
-  req.query.count = 5;
-  req.query.time = 5;
-  req.query.percentage = 20;
   controller.getQuiz(req, res);
 });
 

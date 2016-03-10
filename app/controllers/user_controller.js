@@ -34,12 +34,15 @@ var controllerWhichStateTheUserIsIn = function(req, res, assignment) {
       vm = baseHelper.getViewModel(req.user, 'submission', false, true, err);
       return res.render('user/submission_id', vm);
     }
-    var completedQuizzes = user.completedQuizzes;
-    var assignmentQuizId = assignment.quiz;
-    var isQuizCompleted = baseHelper.loopThroughCollectionWithControl(completedQuizzes,
-      assignmentQuizId);
-    if (!isQuizCompleted) {
-      return res.redirect('/quiz');
+    if (assignment.quiz !== null) {
+      console.log('QUIZ!!!!');
+      var completedQuizzes = user.completedQuizzes;
+      var assignmentQuizId = assignment.quiz;
+      var isQuizCompleted = baseHelper.loopThroughCollectionWithControl(completedQuizzes,
+        assignmentQuizId);
+      if (!isQuizCompleted) {
+        return res.redirect('/quiz?quizId=' + assignmentQuizId);
+      }
     }
     var completedTestfiles = user.completedTestfiles;
     var isTestfileCompleted = baseHelper.loopThroughCollectionWithControl(completedTestfiles,

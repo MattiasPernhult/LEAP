@@ -15,6 +15,7 @@ var admins = require('./app/routes/admins');
 var compilers = require('./app/routes/compilers');
 var index = require('./app/routes/index');
 var users = require('./app/routes/users');
+var ioHelper = require('./app/utils/io_helper');
 
 var passportConfig = require('./app/config/passport');
 passportConfig();
@@ -86,6 +87,8 @@ app.use(function(err, req, res, next) {
     error: {},
   });
 });
+
+ioHelper.updateQuizzes();
 
 // TODO: Change interval to one hour for production
 // setInterval(function emptyQuizResultsFolder() {

@@ -11,24 +11,27 @@ var mongoService = require('../services/mongo_service');
 var controller = {};
 
 controller.getQuiz = function(req, res) {
-  var quiz = quizzer['generate']({
-    uname: req.user.google.name,
-    uemail: req.user.google.email,
-    name: 'java',
-    count: parseInt(req.query.count),
-    time: parseInt(req.query.time),
-    perc: parseInt(req.query.percentage),
-  });
+  console.log(req.query.quizId);
+  mongoService.getQuizById(req.query.quizId, function(err, quiz) {
+    var generatedQuiz = quizzer['generate']({
+      uname: req.user.google.name,
+      uemail: req.user.google.email,
+      name: quiz.quizId,
+      count: parseInt(quiz.numberOfQuestions),
+      time: parseInt(quiz.time),
+      perc: parseInt(quiz.percentage),
+    });
 
-  var p = path.join(__dirname, '../views/user/quiz.ejs');
-  fs.readFile(p, function(err, data) {
-    if (err) {
-      console.log(err);
-    }
-    var compiled = _.template(data.toString());
-    res.send(compiled({
-      quiz: quiz,
-    }));
+    var p = path.join(__dirname, '../views/user/quiz.ejs');
+    fs.readFile(p, function(err, data) {
+      if (err) {
+        console.log(err);
+      }
+      var compiled = _.template(data.toString());
+      res.send(compiled({
+        quiz: generatedQuiz,
+      }));
+    });
   });
 };
 

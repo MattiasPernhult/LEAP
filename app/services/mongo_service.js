@@ -86,7 +86,10 @@ var mongoService = function() {
     } else {
       incrementObject.$inc.failures = 1;
     }
-    TestfileSchema.findByIdAndUpdate(assignmentID, incrementObject);
+    TestfileSchema.findByIdAndUpdate(assignmentID, incrementObject, function(err, assignment) {
+      console.log(err);
+      console.log(assignment);
+    });
   };
 
   var addCompletedQuizResultToUser = function(userEmail, quizId, callback) {
@@ -128,12 +131,20 @@ var mongoService = function() {
     quiz.numberOfQuestions = body.quiz.numberOfQuestions;
     quiz.quizTime = body.quiz.time;
     quiz.quizPercentage = body.quiz.percentage;
-    console.log('QUIZ!!!!!!');
-    console.log(quiz);
     quiz.save(function(err, quiz) {
-      console.log(err);
-      console.log(quiz);
       done(err, quiz);
+    });
+  };
+
+  var getQuizById = function(quizId, done) {
+    QuizSchema.findOne({quizId: quizId}, function(err, quiz) {
+      return done(err, quiz);
+    });
+  };
+
+  var getAllQuizzes = function(done) {
+    QuizSchema.find({}, function(err, quizzes) {
+      done(err, quizzes);
     });
   };
 
@@ -150,6 +161,8 @@ var mongoService = function() {
     addCompletedQuizResultToUser: addCompletedQuizResultToUser,
     addCompletedTestfileResultToUser: addCompletedTestfileResultToUser,
     insertQuiz: insertQuiz,
+    getQuizById: getQuizById,
+    getAllQuizzes: getAllQuizzes,
   };
 };
 

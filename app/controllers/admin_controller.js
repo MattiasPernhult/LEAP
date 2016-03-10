@@ -26,22 +26,31 @@ controller.upload = function(req, res) {
         courseCode: req.body.courseCode,
         assignmentID: req.user.google.email + ':' + req.body.courseCode + ':' +
         req.body.assignmentID,
-        quiz: req.user.google.email + ':' + req.body.courseCode + ':' +
-        req.body.assignmentID,
       };
+
+      if (req.body.quiz) {
+        assignment.quiz = req.user.google.email + ':' + req.body.courseCode + ':' +
+        req.body.assignmentID;
+      }
 
       mongoService.insertAssignment(assignment, function(err, assignment) {
         if (err) {
           return res.status(500).send(err);
         }
-        mongoService.insertQuiz(req.body, req.user.google.email + ':' + req.body.courseCode + ':' +
-        req.body.assignmentID, req.user.google, function(err, quiz) {
-          if (err) {
-            return res.status(500).send(err);
-          }
-          console.log('Assignment added: ' + assignment);
-          return res.send(assignment);
-        });
+        if (req.body.quiz) {
+          mongoService.insertQuiz(req.body, req.user.google.email + ':' + req.body.courseCode +
+          ':' + req.body.assignmentID, req.user.google, function(err, quiz) {
+            if (err) {
+              return res.status(500).send(err);
+            }
+            console.log('Assignment added: ' + assignment);
+            setInterval(function() {
+              ioHelper.updateQuizzes();
+            }, 5000);
+            return res.send(assignment);
+          });
+        }
+        return res.send(assignment);
       });
     });
 };

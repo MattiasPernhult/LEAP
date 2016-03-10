@@ -1,5 +1,8 @@
 var fs = require('fs');
 var exec = require('child_process').exec;
+var path = require('path');
+
+var mongoService = require('../services/mongo_service');
 
 var ioHelper = {};
 
@@ -30,6 +33,24 @@ ioHelper.copyFile = function(source, target, done) {
 
   readStream.on('end', function() {
     done();
+  });
+};
+
+ioHelper.updateQuizzes = function() {
+  mongoService.getAllQuizzes(function(err, quizzes) {
+    var quizObject = {
+      email: '',
+      quizzes: {},
+    };
+    for (var i = 0; i < quizzes.length; i++) {
+      var quiz = quizzes[i];
+      quizObject.quizzes[quiz.quizId] = quiz.questions;
+    }
+    fs.writeFile(path.join(__dirname, '../../node_modules/node-quizzer/data/quizzes.json'),
+    JSON.stringify(quizObject), function(err) {
+      console.log('UPDATE QUIZZES: ERROR?');
+      console.log(err);
+    });
   });
 };
 
