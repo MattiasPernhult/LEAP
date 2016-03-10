@@ -9,7 +9,7 @@ var AssignmentSchema = new mongoose.Schema({
   assignmentID: String,
   failures: {type: Number, default: 0},
   success: {type: Number, default: 0},
-  quiz: {type: String, default: 'nodejs'},
+  quiz: {type: String, default: 'java'},
 });
 
 module.exports = mongoose.model('Assignment', AssignmentSchema);

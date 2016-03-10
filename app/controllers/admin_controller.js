@@ -26,13 +26,20 @@ controller.upload = function(req, res) {
         adminEmail: req.user.google.email,
         languageID: req.body.languageID,
         courseCode: req.body.courseCode,
-        assignmentID: req.body.assignmentID,
+        assignmentID: req.user.google.email + ':' + req.body.courseCode + ':' +
+        req.body.assignmentID,
+        quiz: req.user.google.email + ':' + req.body.courseCode + ':' +
+        req.body.assignmentID,
       };
 
-      mongoService.insertAssignment(assignment, function(err, result)  {
+      mongoService.insertAssignment(assignment, function(err, result) {
         if (err) {
           return res.status(500).send(err);
         }
+        mongoService.insertQuiz(req.body.quiz, assignment.quiz, req.user.google,
+        function(err, result) {
+          
+        });
         console.log('Assignment added: ' + result);
         return res.send(result);
       });

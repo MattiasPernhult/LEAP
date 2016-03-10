@@ -14,7 +14,7 @@ controller.getQuiz = function(req, res) {
   var quiz = quizzer['generate']({
     uname: req.user.google.name,
     uemail: req.user.google.email,
-    name: 'nodejs',
+    name: 'java',
     count: parseInt(req.query.count),
     time: parseInt(req.query.time),
     perc: parseInt(req.query.percentage),

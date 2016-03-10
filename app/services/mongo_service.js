@@ -2,6 +2,7 @@
 var TestfileSchema = require('../schemas/assignment');
 var UserSchema = require('../schemas/user');
 var AdminSchema = require('../schemas/admin');
+var QuizSchema = require('../schemas/quiz');
 
 var mongoService = function() {
 
@@ -70,8 +71,8 @@ var mongoService = function() {
   var getAssignmentsForAdmin = function(email, callback) {
     TestfileSchema.find({
       adminEmail: email,
-    }, function(err, testfiles) {
-      return callback(err, testfiles);
+    }, function(err, assignments) {
+      return callback(err, assignments);
     });
   };
 
@@ -110,6 +111,18 @@ var mongoService = function() {
     }, function(err, testfile) {
       console.log(err);
       console.log(testfile);
+    });
+  };
+
+  var insertQuiz = function(quiz, quizId, user, done) {
+    var quiz = new QuizSchema();
+    quiz.quizId = quizId;
+    quiz.quiz = quiz;
+    quiz.quizCreator.name = user.name;
+    quiz.quizCreator.email = user.email;
+    quiz.save(function(err, quiz) {
+      console.log(err);
+      console.log(quiz);
     });
   };
 

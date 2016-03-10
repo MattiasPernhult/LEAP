@@ -23,7 +23,7 @@ helper.getViewModel = function(user, active, passed, error, errorMessage) {
   };
 };
 
-helper.loopThroughCollectionWithControl = function(collection, control) {
+helper.loopThroughCollectionWithControl = function(collection, control)  {
   for (var i = 0; i < collection.length; i++) {
     var item = collection[i];
     if (item === control) {
@@ -66,7 +66,9 @@ helper.prepareBody = function(req, res, next) {
       exec('unzip ' + req.body.tempFolder + '/src.zip -d ' + req.body.tempFolder,
         function(err, stdout, stderr) {
           if (err) {
-            return res.status(400).send({message: 'You must provide a zip file'});
+            return res.status(400).send({
+              message: 'You must provide a zip file',
+            });
           }
           console.log('klara prepareBody');
           next();
@@ -138,7 +140,76 @@ helper.validateAdminUploadParameters = function(req, res, next) {
         message: result,
       });
     }
-    next();
+    checkIfAssignmentIDExistsForAdmin(req, res, function(exists) {
+      if (exists) {
+        var message = 'You already have assignment with id ' + req.body.assignmentID +
+          ' for course ' + req.body.courseCode;
+        return res.status(400).send({
+          message: message,
+        });
+      }
+      if (req.body.quiz) {
+        var errors = validateQuiz(req.body.quiz)
+        if (errors.length > 0) {
+          return res.status(400).send(errors);
+        }
+        next();
+      }
+    });
+  });
+};
+
+var validateQuiz = function(quiz) {
+  var errors = [];
+  var questionNumber = 1;
+  if (quiz.constructor !== Array) {
+    errors.push({message: 'The quiz must be an array'});
+    return errors;
+  }
+  for (var i = 0; i < quiz.length; i++) {
+    var question = quiz[i];
+    if (question.type > 1) {
+      errors.push({message: 'Type cannot be greater than 1 for question ' + questionNumber});
+    }
+    if (!question.title) {
+      errors.push({message: 'You must provide a question for question ' + questionNumber});
+    }
+    if (question.opts.length < 2) {
+      errors.push({message: 'Question ' + questionNumber + ' must have atleast 2 answers'});
+    }
+    if (question.correct.length <= 0) {
+      errors.push({message: 'Question ' + questionNumber + ' must have atleast 1 correct answers'});
+    }
+    for (var j = 0; j < question.correct.length; j++) {
+      var correctAnswer = question.correct[j];
+      if (correctAnswer > question.opts.length - 1) {
+        errors.push({
+          message: 'The correct answer ' + correctAnswer + ' is not a possible answer ' +
+        'for question ' + questionNumber,
+        });
+      }
+    }
+    questionNumber++;
+  }
+  return errors;
+};
+
+var checkIfAssignmentIDExistsForAdmin = function(req, res, done) {
+  mongoService.getAssignmentsForAdmin(req.user.google.email, function(err, assignments) {
+    if (err) {
+      return res.status(500).send({
+        message: 'Need a break from the mongo',
+      });
+    }
+    var assignmentID = req.user.google.email + ':' + req.body.courseCode + ':' +
+      req.body.assignmentID;
+    for (var i = 0; i < assignments.length; i++) {
+      var assignment = assignments[i];
+      if (assignment.assignmentID === assignmentID) {
+        return done(true);
+      }
+    }
+    return done(false);
   });
 };
 
@@ -157,12 +228,12 @@ var checkTestFileCorrectness = function(body, done) {
   var intervalId = setInterval(function() {
     fs.readFile(currentPath + tempFolder + '/' + userFolder + '/error.txt', 'utf8',
       function(err, data) {
-      if (err) {
-        return;
-      }
-      clearInterval(intervalId);
-      return done(null, data);
-    });
+        if (err) {
+          return;
+        }
+        clearInterval(intervalId);
+        return done(null, data);
+      });
   }, 2000);
 };
 
