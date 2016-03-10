@@ -44,6 +44,14 @@ body {
   border: none;
 }
 
+.alert-danger {
+  margin-top: 20px;
+}
+
+.alert-success {
+  margin-top: 20px;
+}
+
 .huge {
     font-size: 50px;
     line-height: normal;
