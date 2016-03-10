@@ -13,6 +13,26 @@ helper.getRandomFolder = function() {
   return crypto.randomBytes(10).toString('hex');
 };
 
+helper.getViewModel = function(user, active, passed, error, errorMessage) {
+  return {
+    user: user,
+    active: active,
+    passed: passed,
+    error: error,
+    errorMessage: errorMessage,
+  };
+};
+
+helper.loopThroughCollectionWithControl = function(collection, control) {
+  for (var i = 0; i < collection.length; i++) {
+    var item = collection[i];
+    if (item === control) {
+      return true;
+    }
+  }
+  return false;
+};
+
 helper.prepareUniqueFolder = function(req, res, next) {
   console.log('i prepare unique folder');
   var tempFolder = helper.getRandomFolder();

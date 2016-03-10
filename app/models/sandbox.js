@@ -76,9 +76,6 @@ Sandbox.prototype.execute = function(callback) {
         status: 400,
         message: stderr,
       };
-      exec('rm -rf ' + self.tempFolder);
-      exec('docker rm -v ' + self.tempFolder);
-
       return callback(error, null);
     }
     fs.readFile(self.joinedPath + self.userFolder + '/output.txt', 'utf8', function(err, data) {
@@ -93,8 +90,6 @@ Sandbox.prototype.execute = function(callback) {
       } else {
         callback(err, {result: data});
       }
-      exec('rm -rf ' + self.tempFolder);
-      exec('docker rm -v ' + self.tempFolder);
     });
   });
 };

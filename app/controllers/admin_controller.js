@@ -34,8 +34,6 @@ controller.upload = function(req, res) {
           return res.status(500).send(err);
         }
         console.log('Assignment added: ' + result);
-        ioHelper.removeTempFolder(req.body.tempFolder);
-        ioHelper.removeTempContainer(req.body.tempFolder);
         return res.send(result);
       });
     });
