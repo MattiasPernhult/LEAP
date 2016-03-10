@@ -6,9 +6,11 @@ var router = express.Router();
 var controller = require('../controllers/admin_controller');
 var helper = require('../utils/base_helper');
 var loginHelper = require('../utils/login_helper');
+var ioHelper = require('../utils/io_helper');
 
-router.post('/upload', loginHelper.isLoggedIn, helper.prepareUniqueFolder, helper.prepareBody,
-helper.validateAdminUploadParameters, function(req, res) {
+router.post('/upload', loginHelper.isLoggedIn, ioHelper.removeTempFolderAndContainer,
+helper.prepareUniqueFolder, helper.prepareBody, helper.validateAdminUploadParameters,
+function(req, res) {
   controller.upload(req, res);
 });
 

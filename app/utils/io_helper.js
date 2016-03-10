@@ -13,12 +13,12 @@ ioHelper.createFolder = function(tempFolder, path, done) {
   });
 };
 
-ioHelper.removeTempFolder = function(tempFolder) {
-  exec('rm -rf ' + tempFolder);
-};
-
-ioHelper.removeTempContainer = function(tempContainer) {
-  exec('docker rm -v ' + tempContainer);
+ioHelper.removeTempFolderAndContainer = function(req, res, next) {
+  res.on('finish', function() {
+    exec('rm -rf ' + req.body.tempFolder);
+    exec('docker rm -v ' + req.body.tempFolder);
+  });
+  next();
 };
 
 // TODO: add error handling for the streams and arguments to callback
