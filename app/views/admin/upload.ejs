@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html ng-app="sandboxApp" lang="en">
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Compile Sandbox</title>
+    <title>Compile Sandbox</title>
 
-  <link href="/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/css/sb-admin.css" rel="stylesheet">
-  <link href="/css/plugins/morris.css" rel="stylesheet">
-  <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/sb-admin.css" rel="stylesheet">
+    <link href="/css/plugins/morris.css" rel="stylesheet">
+    <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-  <script src="/js/jquery.js"></script>
-  <script src="/js/bootstrap.min.js"></script>
-  <script src="/js/lib/angular.js"></script>
-  <script src="/js/lib/angular-route.js"></script>
-  <script src="/js/controller.js"></script>
-</head>
+    <script src="/js/jquery.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/lib/angular.js"></script>
+    <script src="/js/lib/angular-route.js"></script>
+    <script src="/js/controller.js"></script>
+  </head>
 
-<body>
+  <body>
 
-  <div id="wrapper" ng-controller="UploadController as ctrl">
-    <% include navigation.ejs %>
+    <div id="wrapper" ng-controller="UploadController as ctrl">
+      <% include navigation.ejs %>
 
       <div id="page-wrapper-margin">
         <div class="container-fluid">
@@ -36,29 +36,130 @@
               <form name="uploadForm" ng-submit="uploadFile()">
 
                 <div class="form-group {{ctrl.courseClass}}">
-                  <label class="control-label" for="courseCode">Course code</label>
-                  <select ng-model="body.courseCode" class="form-control" name="courseCode" required>
+                  <label class="control-label">Course code</label>
+                  <select ng-model="body.courseCode" class="form-control" required>
                     <% for (var i = 0; i < courseCodes.length; i++) { %>
                       <option><%= courseCodes[i] %></option>
                     <% } %>
                   </select>
                 </div>
                 <div class="form-group {{ctrl.assignmentClass}}">
-                  <label class="control-label" for="assignmentID">Assignment ID</label>
-                  <input ng-model="body.assignmentID" type="text" class="form-control" name="assignmentID" placeholder="Assignment ID" required/>
+                  <label class="control-label">Assignment ID</label>
+                  <input ng-model="body.assignmentID" type="text" class="form-control" placeholder="Assignment ID" required/>
                 </div>
                 <div class="form-group {{ctrl.languageClass}}">
-                  <label for="languageID">Language</label>
-                  <select ng-model="body.languageID" class="form-control" name="languageID" required>
+                  <label class="control-label">Language</label>
+                  <select ng-model="body.languageID" class="form-control" required>
                     <option>Java</option>
                   </select>
                 </div>
 
                 <div class="form-group">
-                  <input file-model="myFile" type="file" name="file" required/>
+                  <input file-model="myFile" type="file" required/>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Do you want to create a quiz?</label>
+                  <input ng-model="quiz.show" type="checkbox" class="checkbox-quiz"/>
                 </div>
                 <div>
-                  <input type="submit" class="btn btn-primary btn-block" />
+                  <input type="submit" class="btn btn-primary btn-block"/>
+                </div>
+              </form>
+
+              <form name="quizForm" ng-submit="nextQuestion()" ng-show="quiz.show">
+
+                <div ng-show="quiz.show" class="form-group">
+                  <div class="">
+                    <label class="control-label">How many questions do you want?</label>
+                    <input ng-model="quiz.numberOfQuestions" class="form-control" type="number" min="1"/>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label">How long time should the quiz take (in minutes)?</label>
+                    <input ng-model="quiz.time" class="form-control" type="number" min="1"/>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label">What is the minimum score (in percentage)?</label>
+                    <input ng-model="quiz.percentage" class="form-control" type="number" min="1" max="100"/>
+                  </div>
+                </div>
+
+                <h3>Question
+                  {{quiz.questions.length + 1}}</h3>
+                <div class="form-group">
+                  <label class="control-label">Question</label>
+                  <input class="form-control" ng-model="question.title" type="text" required/>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Code</label>
+                  <input class="form-control" ng-model="question.code" type="text"/>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Type</label>
+                  <select ng-model="question.type" class="form-control" required>
+                    <option>0 - One correct answer</option>
+                    <option>1 - Multiple correct answers</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="control-label">Answer 1</label>
+                  <input class="form-control" ng-model="question.answers.answerOne" type="text" required/>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Answer 2</label>
+                  <input class="form-control" ng-model="question.answers.answerTwo" type="text" required/>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Answer 3</label>
+                  <input class="form-control" ng-model="question.answers.answerThree" type="text"/>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">Answer 4</label>
+                  <input class="form-control" ng-model="question.answers.answerFour" type="text"/>
+                </div>
+
+                <div ng-show="question.type === '1 - Multiple correct answers'" class="form-group">
+                  <label class="control-label">Correct answers</label>
+                  <div class="checkbox">
+                    <label>
+                      <input ng-model="question.correctAnswers.answerOne" value="answer1" type="checkbox"/>Answer 1
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input ng-model="question.correctAnswers.answerTwo" value="answer2" type="checkbox"/>Answer 2
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input ng-model="question.correctAnswers.answerThree" value="answer3" type="checkbox"/>Answer 3
+                    </label>
+                  </div>
+                  <div class="checkbox">
+                    <label>
+                      <input ng-model="question.correctAnswers.answerFour" value="answer4" type="checkbox"/>Answer 4
+                    </label>
+                  </div>
+                </div>
+
+                <div ng-show="question.type === '0 - One correct answer'" class="form-group">
+                  <label class="control-label">Correct answer</label>
+                  <div class="radio">
+                    <label><input ng-model="question.correctAnswer" type="radio" name="correctAnswer" value="0" id="option1" checked>Answer 1</label>
+                  </div>
+                  <div class="radio">
+                    <label><input ng-model="question.correctAnswer" type="radio" name="correctAnswer" value="1" id="option2">Answer 2</label>
+                  </div>
+                  <div class="radio">
+                    <label><input ng-model="question.correctAnswer" type="radio" name="correctAnswer" value="2" id="option3">Answer 3</label>
+                  </div>
+                  <div class="radio">
+                    <label><input ng-model="question.correctAnswer" type="radio" name="correctAnswer" value="3" id="option4">Answer 4</label>
+                  </div>
+                </div>
+
+                <div>
+                  <input type="submit" value="Add Question" class="btn btn-primary btn-block"/>
                 </div>
               </form>
 
@@ -85,11 +186,12 @@
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
       </div>
-  </div>
-</body>
+    </div>
+  </body>
 
 </html>

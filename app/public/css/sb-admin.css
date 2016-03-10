@@ -264,3 +264,7 @@ span.glyphicon.glyphicon-remove {
     margin-right: 20px;
     color: #b30000;
 }
+
+input.checkbox-quiz {
+  margin-left: 15px;
+}

@@ -138,6 +138,7 @@ helper.validateAdminUploadParameters = function(req, res, next) {
         message: result,
       });
     }
+    console.log('Klara admin parameters');
     next();
   });
 };
