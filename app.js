@@ -88,14 +88,14 @@ app.use(function(err, req, res, next) {
 });
 
 // TODO: Change interval to one hour for production
-setInterval(function emptyQuizResultsFolder() {
-  fsExtra.emptyDir('./results', function(err) {
-    if (err) {
-      console.log('Could not empty /results folder');
-    } else {
-      console.log('Successfully emptied the /result folder');
-    }
-  });
-}, 15 * 1000);
+// setInterval(function emptyQuizResultsFolder() {
+//   fsExtra.emptyDir('./results', function(err) {
+//     if (err) {
+//       console.log('Could not empty /results folder');
+//     } else {
+//       console.log('Successfully emptied the /result folder');
+//     }
+//   });
+// }, 15 * 1000);
 
 module.exports = app;

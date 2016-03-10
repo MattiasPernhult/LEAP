@@ -31,7 +31,7 @@ angular.module('sandboxApp', [])
     if (body.courseCode) {
       fd.append('courseCode', body.courseCode);
     }
-    fd.append('quiz', body.quiz);
+    fd.append('quiz', JSON.stringify(body.quiz));
     $http.post(uploadUrl, fd, {
         transformRequest: angular.identity,
         headers: {
@@ -121,6 +121,43 @@ angular.module('sandboxApp', [])
     opts: [],
     correct: [],
     correctAnswers: {},
+    correctAnswer: '0',
+  };
+
+  $scope.validateQuestion = function() {
+    var errors = [];
+    var questionNumber = $scope.quiz.questions.length + 1;
+    var question = $scope.question;
+    if (question.type > 1) {
+      errors.push({
+        message: 'Type cannot be greater than 1 for question ' + questionNumber,
+      });
+    }
+    if (!question.title) {
+      errors.push({
+        message: 'You must provide a question for question ' + questionNumber,
+      });
+    }
+    if (question.opts.length < 2)  {
+      errors.push({
+        message: 'Question ' + questionNumber + ' must have atleast 2 answers',
+      });
+    }
+    if (question.correct.length <= 0) {
+      errors.push({
+        message: 'Question ' + questionNumber + ' must have atleast 1 correct answers',
+      });
+    }
+    for (var j = 0; j < question.correct.length; j++)  {
+      var correctAnswer = question.correct[j];
+      if (correctAnswer > question.opts.length - 1) {
+        errors.push({
+          message: 'The correct answer ' + correctAnswer + ' is not a possible answer ' +
+            'for question ' + questionNumber,
+        });
+      }
+    }
+    return errors;
   };
 
   $scope.nextQuestion = function() {
@@ -133,6 +170,7 @@ angular.module('sandboxApp', [])
     $scope.question.lang = null;
     if ($scope.question.type === '0 - One correct answer') {
       $scope.question.correct.push(Number($scope.question.correctAnswer));
+      $scope.question.type = 0;
     } else {
       for (var index in $scope.question.correctAnswers) {
         console.log(index);
@@ -148,9 +186,23 @@ angular.module('sandboxApp', [])
           }
         }
       }
+      $scope.question.type = 1;
     }
     for (var iterator in $scope.question.answers) {
       $scope.question.opts.push($scope.question.answers[iterator]);
+    }
+    var errors = $scope.validateQuestion();
+    if (errors.length > 0) {
+      var errorMessage = '';
+      for (var i = 0; i < errors.length; i++)  {
+        var message = errors[i].message;
+        errorMessage += message + '\n';
+      }
+      $scope.error = errorMessage;
+      $scope.showResult = false;
+      $scope.showError = true;
+      $scope.question.type = '0 - One correct answer';
+      return;
     }
     $scope.quiz.questions.push($scope.question);
     $scope.question = {
@@ -162,6 +214,7 @@ angular.module('sandboxApp', [])
       title: '',
       code: '',
     };
+    $scope.showError = false;
     return;
   };
 
@@ -172,9 +225,26 @@ angular.module('sandboxApp', [])
   $scope.showResult = false;
   $scope.showError = false;
 
+  $scope.validateQuiz = function() {
+    if ($scope.quiz.numberOfQuestions > $scope.quiz.questions.length) {
+      $scope.error = 'Number of questions/quiz can\'t be greater than number of questions that ' +
+        'you have provided.';
+      $scope.showResult = false;
+      $scope.showError = true;
+      return false;
+    }
+    return true;
+  };
+
   $scope.uploadFile = function() {
     var file = $scope.myFile;
     $scope.body.quiz = $scope.quiz;
+
+    if (!$scope.validateQuiz($scope.body.quiz)) {
+      return;
+    }
+
+    $scope.showError = false;
 
     var uploadUrl = 'http://localhost:3000/admins/upload';
     fileUpload.uploadFileToUrl(file, $scope.body, uploadUrl, function(err, data) {

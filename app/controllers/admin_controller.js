@@ -17,8 +17,6 @@ controller.upload = function(req, res) {
           message: err,
         });
       }
-
-      console.log(req.body);
       var fileContentInBase64 = new Buffer(fileContent).toString('base64');
       var assignment = {
         testfile: fileContentInBase64,
@@ -32,16 +30,18 @@ controller.upload = function(req, res) {
         req.body.assignmentID,
       };
 
-      mongoService.insertAssignment(assignment, function(err, result) {
+      mongoService.insertAssignment(assignment, function(err, assignment) {
         if (err) {
           return res.status(500).send(err);
         }
-        mongoService.insertQuiz(req.body.quiz, assignment.quiz, req.user.google,
-        function(err, result) {
-          
+        mongoService.insertQuiz(req.body, req.user.google.email + ':' + req.body.courseCode + ':' +
+        req.body.assignmentID, req.user.google, function(err, quiz) {
+          if (err) {
+            return res.status(500).send(err);
+          }
+          console.log('Assignment added: ' + assignment);
+          return res.send(assignment);
         });
-        console.log('Assignment added: ' + result);
-        return res.send(result);
       });
     });
 };

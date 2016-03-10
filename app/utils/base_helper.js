@@ -53,27 +53,33 @@ helper.prepareBody = function(req, res, next) {
   req.pipe(req.busboy);
 
   req.busboy.on('field', function(fieldname, val) {
-    req.body[fieldname] = val;
+    if (fieldname === 'quiz') {
+      req.body[fieldname] = JSON.parse(val);
+    } else {
+      req.body[fieldname] = val;
+    }
   });
 
   req.busboy.on('file', function(fieldname, file, filename) {
-    var userFolder = filename.substring(0, filename.indexOf('.'));
-    req.body.userFolder = userFolder;
-    var writeStream = fs.createWriteStream(req.body.tempFolder + '/src.zip');
-    file.pipe(writeStream);
+    if (fieldname === 'file') {
+      var userFolder = filename.substring(0, filename.indexOf('.'));
+      req.body.userFolder = userFolder;
+      var writeStream = fs.createWriteStream(req.body.tempFolder + '/src.zip');
+      file.pipe(writeStream);
 
-    writeStream.on('close', function(ex) {
-      exec('unzip ' + req.body.tempFolder + '/src.zip -d ' + req.body.tempFolder,
-        function(err, stdout, stderr) {
-          if (err) {
-            return res.status(400).send({
-              message: 'You must provide a zip file',
-            });
-          }
-          console.log('klara prepareBody');
-          next();
-        });
-    });
+      writeStream.on('close', function(ex) {
+        exec('unzip ' + req.body.tempFolder + '/src.zip -d ' + req.body.tempFolder,
+          function(err, stdout, stderr) {
+            if (err) {
+              return res.status(400).send({
+                message: 'You must provide a zip file',
+              });
+            }
+            console.log('klara prepareBody');
+            next();
+          });
+      });
+    }
   });
 };
 
@@ -148,13 +154,13 @@ helper.validateAdminUploadParameters = function(req, res, next) {
           message: message,
         });
       }
-      if (req.body.quiz) {
-        var errors = validateQuiz(req.body.quiz);
-        if (errors.length > 0) {
-          return res.status(400).send(errors);
-        }
-        next();
-      }
+      // if (req.body.quiz) {
+      //   var errors = validateQuiz(req.body.quiz);
+      //   if (errors.length > 0) {
+      //     return res.status(400).send(errors);
+      //   }
+      // }
+      next();
     });
   });
 };
@@ -162,30 +168,40 @@ helper.validateAdminUploadParameters = function(req, res, next) {
 var validateQuiz = function(quiz) {
   var errors = [];
   var questionNumber = 1;
-  if (quiz.constructor !== Array) {
-    errors.push({message: 'The quiz must be an array'});
+  if (quiz.questions.constructor !== Array) {
+    errors.push({
+      message: 'The quiz must be an array',
+    });
     return errors;
   }
-  for (var i = 0; i < quiz.length; i++) {
-    var question = quiz[i];
+  for (var i = 0; i < quiz.questions.length; i++) {
+    var question = quiz.questions[i];
     if (question.type > 1) {
-      errors.push({message: 'Type cannot be greater than 1 for question ' + questionNumber});
+      errors.push({
+        message: 'Type cannot be greater than 1 for question ' + questionNumber,
+      });
     }
     if (!question.title) {
-      errors.push({message: 'You must provide a question for question ' + questionNumber});
+      errors.push({
+        message: 'You must provide a question for question ' + questionNumber,
+      });
     }
-    if (question.opts.length < 2) {
-      errors.push({message: 'Question ' + questionNumber + ' must have atleast 2 answers'});
+    if (question.opts.length < 2)  {
+      errors.push({
+        message: 'Question ' + questionNumber + ' must have atleast 2 answers',
+      });
     }
     if (question.correct.length <= 0) {
-      errors.push({message: 'Question ' + questionNumber + ' must have atleast 1 correct answers'});
+      errors.push({
+        message: 'Question ' + questionNumber + ' must have atleast 1 correct answers',
+      });
     }
-    for (var j = 0; j < question.correct.length; j++) {
+    for (var j = 0; j < question.correct.length; j++)  {
       var correctAnswer = question.correct[j];
       if (correctAnswer > question.opts.length - 1) {
         errors.push({
           message: 'The correct answer ' + correctAnswer + ' is not a possible answer ' +
-        'for question ' + questionNumber,
+            'for question ' + questionNumber,
         });
       }
     }

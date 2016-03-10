@@ -2,7 +2,8 @@
 var TestfileSchema = require('../schemas/assignment');
 var UserSchema = require('../schemas/user');
 var AdminSchema = require('../schemas/admin');
-var QuizSchema = require('../schemas/quiz');
+var QuizSchema = require('../schemas/quiz').Quiz;
+var QuestionSchema = require('../schemas/quiz').Question;
 
 var mongoService = function() {
 
@@ -114,15 +115,25 @@ var mongoService = function() {
     });
   };
 
-  var insertQuiz = function(quiz, quizId, user, done) {
+  var insertQuiz = function(body, quizId, user, done) {
     var quiz = new QuizSchema();
     quiz.quizId = quizId;
-    quiz.quiz = quiz;
+    var questions = [];
+    for (var i = 0; i < body.quiz.questions.length; i++) {
+      questions.push(new QuestionSchema(body.quiz.questions[i]));
+    }
+    quiz.questions = questions;
     quiz.quizCreator.name = user.name;
     quiz.quizCreator.email = user.email;
+    quiz.numberOfQuestions = body.quiz.numberOfQuestions;
+    quiz.quizTime = body.quiz.time;
+    quiz.quizPercentage = body.quiz.percentage;
+    console.log('QUIZ!!!!!!');
+    console.log(quiz);
     quiz.save(function(err, quiz) {
       console.log(err);
       console.log(quiz);
+      done(err, quiz);
     });
   };
 
@@ -138,6 +149,7 @@ var mongoService = function() {
     findUserByEmail: findUserByEmail,
     addCompletedQuizResultToUser: addCompletedQuizResultToUser,
     addCompletedTestfileResultToUser: addCompletedTestfileResultToUser,
+    insertQuiz: insertQuiz,
   };
 };
 

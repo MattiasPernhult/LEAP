@@ -12,7 +12,13 @@ router.post('/upload', loginHelper.isLoggedIn, ioHelper.removeTempFolderAndConta
 helper.prepareUniqueFolder, helper.prepareBody, helper.validateAdminUploadParameters,
 function(req, res) {
   console.log(req.body.quiz.questions);
-  //controller.upload(req, res);
+  for (var i = 0; i < req.body.quiz.questions.length; i++) {
+    delete req.body.quiz.questions[i].correctAnswers;
+    delete req.body.quiz.questions[i].answers;
+    delete req.body.quiz.questions[i].correctAnswer;
+  }
+  console.log(req.body.quiz.questions);
+  controller.upload(req, res);
 });
 
 router.get('/upload', loginHelper.isLoggedIn, function(req, res) {
