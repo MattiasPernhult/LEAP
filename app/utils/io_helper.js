@@ -36,20 +36,22 @@ ioHelper.copyFile = function(source, target, done) {
   });
 };
 
-ioHelper.updateQuizzes = function() {
+ioHelper.updateQuizzes = function(done) {
   mongoService.getAllQuizzes(function(err, quizzes) {
     var quizObject = {
       email: '',
       quizzes: {},
     };
+    console.log(quizzes);
     for (var i = 0; i < quizzes.length; i++) {
       var quiz = quizzes[i];
       quizObject.quizzes[quiz.quizId] = quiz.questions;
     }
-    fs.writeFile(path.join(__dirname, '../../node_modules/node-quizzer/data/quizzes.json'),
+    fs.writeFile(path.join(__dirname, '../quizzer/data/quizzes.json'),
     JSON.stringify(quizObject), function(err) {
       console.log('UPDATE QUIZZES: ERROR?');
       console.log(err);
+      done();
     });
   });
 };

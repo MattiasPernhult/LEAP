@@ -88,7 +88,9 @@ app.use(function(err, req, res, next) {
   });
 });
 
-ioHelper.updateQuizzes();
+ioHelper.updateQuizzes(function() {
+  console.log('UPDATED QUIZZES');
+});
 
 // TODO: Change interval to one hour for production
 // setInterval(function emptyQuizResultsFolder() {

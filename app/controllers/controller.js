@@ -1,11 +1,11 @@
 var url = require('url');
-var quizzer = require('node-quizzer');
 var _ = require('underscore-node');
 var fs = require('fs');
 var path = require('path');
 
 // project packages
 var mongoService = require('../services/mongo_service');
+var quizzer = require('../quizzer/index');
 
 // variables and packages
 var controller = {};
@@ -13,7 +13,7 @@ var controller = {};
 controller.getQuiz = function(req, res) {
   console.log(req.query.quizId);
   mongoService.getQuizById(req.query.quizId, function(err, quiz) {
-    var generatedQuiz = quizzer['generate']({
+    var generatedQuiz = quizzer.generate({
       uname: req.user.google.name,
       uemail: req.user.google.email,
       name: quiz.quizId,
@@ -53,8 +53,9 @@ controller.getReview = function(req, res) {
       }
       return res.render('user/quiz_review', vm);
     });
+  } else {
+    return res.render('user/quiz_review', vm);
   }
-  return res.render('user/quiz_review', vm);
 };
 
 var getResult = function(req) {

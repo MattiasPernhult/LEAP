@@ -44,13 +44,13 @@ controller.upload = function(req, res) {
               return res.status(500).send(err);
             }
             console.log('Assignment added: ' + assignment);
-            setInterval(function() {
-              ioHelper.updateQuizzes();
-            }, 5000);
-            return res.send(assignment);
+            ioHelper.updateQuizzes(function() {
+              return res.send(assignment);
+            });
           });
+        } else {
+          return res.send(assignment);
         }
-        return res.send(assignment);
       });
     });
 };
