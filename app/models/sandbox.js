@@ -39,14 +39,16 @@ Sandbox.prototype.setup = function(callback) {
     var rawTestfileContent = new Buffer(assignment.testfile.toString(), 'base64').toString('ascii');
     console.log(self.testRunnerLocation);
 
-    var locationForTestFile = self.joinedPath + '/' + self.userFolder + '/' + self.testFile;
-    var locationForTestRunner = self.joinedPath + '/' + self.userFolder + '/' + self.testRunner;
+    var locationForTestFile = self.joinedPath + self.userFolder + '/' + self.testFile;
+    var locationForTestRunner = self.joinedPath + self.userFolder + '/' + self.testRunner;
     console.log(locationForTestFile);
 
     fs.writeFile(locationForTestFile, rawTestfileContent, function(err) {
       // TODO: error handling, no testrunner, probably 500 (Internal Server Error),
       // should send mail that problem exists
       if (err) {
+        // TODO: handle the error, otherwise the server will return with 200 and it will look
+        // like the user passed the assignment but he didn't.
         console.log(err);
       }
       ioHelper.copyFile(self.testRunnerLocation, locationForTestRunner, function() {
@@ -64,7 +66,7 @@ Sandbox.prototype.execute = function(callback) {
 
   var executeStatement = 'docker run -v ' + this.joinedPath + this.userFolder + ':/' +
     this.tempFolder + '/' + this.userFolder + ' --name ' + this.tempFolder +
-    ' -e testfile=' + this.testFile + ' -e javafile=' + this.userFile + ' -e testrunner=' +
+    ' -e testfile=' + this.testFile + ' -e testrunner=' +
     this.testRunner + ' -e tempfolder=' + this.tempFolder + '/' + this.userFolder +
     ' -e output=./output.txt' + ' -e go=TestRunner ' + this.dockerImage;
 
